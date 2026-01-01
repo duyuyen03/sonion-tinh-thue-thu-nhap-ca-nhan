@@ -88,24 +88,14 @@
                 <div id="diag-area" class="space-y-1 text-gray-600"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Biểu thuế rút gọn</h4>
-                    <table class="w-full text-xs text-center border-collapse"><tbody id="t-quick"></tbody></table>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Biểu lũy tiến từng phần</h4>
-                    <table class="w-full text-xs text-center border-collapse">
-                        <thead class="bg-orange-50 text-[#ff6000]"><tr><th class="p-2 border border-orange-100">Bậc</th><th class="p-2 border border-orange-100">Thu nhập (Tr.đ)</th><th class="p-2 border border-orange-100">Thuế (%)</th></tr></thead>
-                        <tbody class="text-gray-500">
-                            <tr><td class="p-2 border border-gray-100">1</td><td class="p-2 border border-gray-100">Đến 5</td><td class="p-2 border border-gray-100">5%</td></tr>
-                            <tr><td class="p-2 border border-gray-100">2</td><td class="p-2 border border-gray-100">Trên 5 - 10</td><td class="p-2 border border-gray-100">10%</td></tr>
-                            <tr><td class="p-2 border border-gray-100">3</td><td class="p-2 border border-gray-100">Trên 10 - 18</td><td class="p-2 border border-gray-100">15%</td></tr>
-                            <tr><td class="p-2 border border-gray-100">4</td><td class="p-2 border border-gray-100">Trên 18 - 32</td><td class="p-2 border border-gray-100">20%</td></tr>
-                            <tr><td class="p-2 border border-gray-100">5</td><td class="p-2 border border-gray-100">Trên 32 - 52</td><td class="p-2 border border-gray-100">25%</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h4 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Biểu tính thuế rút gọn</h4>
+                <table class="w-full text-xs text-center border-collapse">
+                    <thead class="bg-gray-50 text-gray-500">
+                        <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Thu nhập tính thuế/tháng</th><th class="p-2 border">Thuế suất</th><th class="p-2 border">Số thuế phải nộp</th></tr>
+                    </thead>
+                    <tbody id="tax-table-quick"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -115,18 +105,14 @@
         const fmt = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
         const taxData = [
             { b: 1, limit: 5e6, rate: 0.05, sub: 0, text: "Đến 5tr", quick: "5% TNTT" },
-            { b: 2, limit: 10e6, rate: 0.10, sub: 25e4, text: "5tr - 10tr", quick: "10% TNTT - 0,25tr" },
-            { b: 3, limit: 18e6, rate: 0.15, sub: 75e4, text: "10tr - 18tr", quick: "15% TNTT - 0,75tr" },
+            { b: 2, limit: 10e6, rate: 0.10, sub: 25e4, text: "5tr - 10tr", quick: "10% TNTT - 250k" },
+            { b: 3, limit: 18e6, rate: 0.15, sub: 75e4, text: "10tr - 18tr", quick: "15% TNTT - 750k" },
             { b: 4, limit: 32e6, rate: 0.20, sub: 165e4, text: "18tr - 32tr", quick: "20% TNTT - 1.65tr" },
             { b: 5, limit: 52e6, rate: 0.25, sub: 325e4, text: "32tr - 52tr", quick: "25% TNTT - 3.25tr" },
             { b: 6, limit: 80e6, rate: 0.30, sub: 585e4, text: "52tr - 80tr", quick: "30% TNTT - 5.85tr" },
             { b: 7, limit: Infinity, rate: 0.35, sub: 985e4, text: "Trên 80tr", quick: "35% TNTT - 9.85tr" }
         ];
-           <div>
 
-                  
-
-    </div>
         function switchMainTab(t) {
             currentTab = t;
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
