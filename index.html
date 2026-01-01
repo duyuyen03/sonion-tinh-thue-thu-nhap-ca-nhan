@@ -88,14 +88,24 @@
                 <div id="diag-area" class="space-y-1 text-gray-600"></div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h4 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Biểu tính thuế rút gọn</h4>
-                <table class="w-full text-xs text-center border-collapse">
-                    <thead class="bg-gray-50 text-gray-500">
-                        <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Thu nhập tính thuế/tháng</th><th class="p-2 border">Thuế suất</th><th class="p-2 border">Số thuế phải nộp</th></tr>
-                    </thead>
-                    <tbody id="tax-table-quick"></tbody>
-                </table>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Biểu thuế rút gọn</h4>
+                    <table class="w-full text-xs text-center border-collapse"><tbody id="t-quick"></tbody></table>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Biểu lũy tiến từng phần</h4>
+                    <table class="w-full text-xs text-center border-collapse">
+                        <thead class="bg-orange-50 text-[#ff6000]"><tr><th class="p-2 border border-orange-100">Bậc</th><th class="p-2 border border-orange-100">Thu nhập (Tr.đ)</th><th class="p-2 border border-orange-100">Thuế (%)</th></tr></thead>
+                        <tbody class="text-gray-500">
+                            <tr><td class="p-2 border border-gray-100">1</td><td class="p-2 border border-gray-100">Đến 5</td><td class="p-2 border border-gray-100">5%</td></tr>
+                            <tr><td class="p-2 border border-gray-100">2</td><td class="p-2 border border-gray-100">Trên 5 - 10</td><td class="p-2 border border-gray-100">10%</td></tr>
+                            <tr><td class="p-2 border border-gray-100">3</td><td class="p-2 border border-gray-100">Trên 10 - 18</td><td class="p-2 border border-gray-100">15%</td></tr>
+                            <tr><td class="p-2 border border-gray-100">4</td><td class="p-2 border border-gray-100">Trên 18 - 32</td><td class="p-2 border border-gray-100">20%</td></tr>
+                            <tr><td class="p-2 border border-gray-100">5</td><td class="p-2 border border-gray-100">Trên 32 - 52</td><td class="p-2 border border-gray-100">25%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -114,41 +124,7 @@
         ];
            <div>
 
-                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-l-4 border-[#ff6000] pl-2">Bảng thuế suất thuế TNCN theo từng bậc thu nhập</h2>
-
-                    <table class="w-full text-center border-collapse bg-white text-xs border border-gray-300">
-
-                        <thead class="bg-gray-100">
-
-                            <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Phần thu nhập tính thuế/tháng (Triệu VNĐ)</th><th class="p-2 border">Thuế suất (%)</th></tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr><td class="p-2 border">1</td><td class="p-2 border">= 05</td><td class="p-2 border">5%</td></tr>
-
-                            <tr><td class="p-2 border">2</td><td class="p-2 border">05 - 10</td><td class="p-2 border">10%</td></tr>
-
-                            <tr><td class="p-2 border">3</td><td class="p-2 border">10 - 18</td><td class="p-2 border">15%</td></tr>
-
-                            <tr><td class="p-2 border">4</td><td class="p-2 border">18 - 32</td><td class="p-2 border">20%</td></tr>
-
-                            <tr><td class="p-2 border">5</td><td class="p-2 border">32 - 52</td><td class="p-2 border">25%</td></tr>
-
-                            <tr><td class="p-2 border">6</td><td class="p-2 border">52 - 80</td><td class="p-2 border">30%</td></tr>
-
-                            <tr><td class="p-2 border">7</td><td class="p-2 border"> 80</td><td class="p-2 border">35%</td></tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
+                  
 
     </div>
         function switchMainTab(t) {
