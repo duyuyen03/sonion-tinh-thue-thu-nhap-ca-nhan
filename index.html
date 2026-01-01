@@ -116,12 +116,12 @@
             if (currentTab === 'refund') {
                 title.innerText = "Bảng tính số tiền thuế thu nhập cá nhân được hoàn (Theo năm)";
                 area.innerHTML = `
-                 <div class="field-group"><div class="field-label">Tổng thu nhập (GROSS) năm *</div><div class="field-input-wrapper"><input type="number" id="v1" value="216000000" oninput="calc()" class="input-custom"></div></div>
-                    <div class="field-group"><div class="field-label">Tổng bảo hiểm bắt buộc đã đóng *</div><div class="field-input-wrapper"><input type="number" id="vbh" value="22680000" oninput="calc()" class="input-custom"></div></div>
-                    <div class="field-group"><div class="field-label">Số lượng người phụ thuộc *</div><div class="field-input-wrapper"><input type="number" id="v2" value="0" oninput="calc()" class="input-custom"></div></div>
-                    <div class="field-group"><div class="field-label">Số tháng phụ thuộc *</div><div class="field-input-wrapper"><input type="number" id="vmo" value="0" oninput="calc()" class="input-custom"></div></div>
-                    <div class="field-group"><div class="field-label">Số thuế TNCN đã khấu trừ *</div><div class="field-input-wrapper"><input type="number" id="vpaid" value="1000000" oninput="calc()" class="input-custom"></div></div>
-                    <div class="field-group result-row"><div class="field-label result-label pl-4">Số tiền thuế được hoàn (i)</div><div class="field-input-wrapper pr-4"><input type="text" id="vres" readonly class="input-custom result-input"></div></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Tổng thu nhập (GROSS) năm *</label><input type="number" id="v1" value="216000000" oninput="calc()" class="input-custom"></div></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Tổng bảo hiểm bắt buộc đã đóng *</label><input type="number" id="vbh" value="22680000" oninput="calc()" class="input-custom"></div></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số lượng người phụ thuộc *</label><input type="number" id="v2" value="0" oninput="calc()" class="input-custom"></div></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số tháng phụ thuộc *</label><input type="number" id="vmo" value="0" oninput="calc()" class="input-custom"></div></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số thuế TNCN đã khấu trừ *</label><input type="number" id="vpaid" value="1000000" oninput="calc()" class="input-custom"></div></div>
+                    <div class="field-group result-row"><div class="field-label result-label pl-4">Số tiền thuế được hoàn (i)</label><input type="text" id="vres" readonly class="input-custom result-input"></div></div>
                 `;
             } else {
                 title.innerText = `Tính từ lương ${currentTab.toUpperCase()} - ${subTab === 0 ? 'Cố định' : 'Thay đổi 12 tháng'}`;
