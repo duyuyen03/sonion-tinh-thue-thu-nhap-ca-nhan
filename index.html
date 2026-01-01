@@ -48,7 +48,7 @@
 
             <div class="grid grid-cols-1 gap-6">
                 <div>
-                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-l-4 border-[#ff6000] pl-2">Biểu thuế rút gọn</h2>
+                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-l-4 border-[#ff6000] pl-2">Biểu tính thuế rút gọn</h2>
                     <table class="w-full text-center border-collapse bg-white text-xs border border-gray-300">
                         <thead class="bg-gray-100">
                             <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Thu nhập tính thuế/tháng</th><th class="p-2 border">Thuế suất</th><th class="p-2 border">Số thuế phải nộp</th></tr>
@@ -58,19 +58,19 @@
                 </div>
 
                 <div>
-                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-l-4 border-[#ff6000] pl-2">Biểu thuế lũy tiến từng phần</h2>
+                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-l-4 border-[#ff6000] pl-2">Bảng thuế suất thuế TNCN theo từng bậc thu nhập</h2>
                     <table class="w-full text-center border-collapse bg-white text-xs border border-gray-300">
-                        <thead class="bg-orange-50">
-                            <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Phần TNTT/tháng (Triệu VNĐ)</th><th class="p-2 border">Thuế suất (%)</th></tr>
+                        <thead class="bg-gray-100">
+                            <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Phần thu nhập tính thuế/tháng (Triệu VNĐ)</th><th class="p-2 border">Thuế suất (%)</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td class="p-2 border">1</td><td class="p-2 border">Đến 05</td><td class="p-2 border">5</td></tr>
-                            <tr><td class="p-2 border">2</td><td class="p-2 border">Trên 05 đến 10</td><td class="p-2 border">10</td></tr>
-                            <tr><td class="p-2 border">3</td><td class="p-2 border">Trên 10 đến 18</td><td class="p-2 border">15</td></tr>
-                            <tr><td class="p-2 border">4</td><td class="p-2 border">Trên 18 đến 32</td><td class="p-2 border">20</td></tr>
-                            <tr><td class="p-2 border">5</td><td class="p-2 border">Trên 32 đến 52</td><td class="p-2 border">25</td></tr>
-                            <tr><td class="p-2 border">6</td><td class="p-2 border">Trên 52 đến 80</td><td class="p-2 border">30</td></tr>
-                            <tr><td class="p-2 border">7</td><td class="p-2 border">Trên 80</td><td class="p-2 border">35</td></tr>
+                            <tr><td class="p-2 border">1</td><td class="p-2 border">= 05</td><td class="p-2 border">5%</td></tr>
+                            <tr><td class="p-2 border">2</td><td class="p-2 border">05 - 10</td><td class="p-2 border">10%</td></tr>
+                            <tr><td class="p-2 border">3</td><td class="p-2 border">10 - 18</td><td class="p-2 border">15%</td></tr>
+                            <tr><td class="p-2 border">4</td><td class="p-2 border">18 - 32</td><td class="p-2 border">20%</td></tr>
+                            <tr><td class="p-2 border">5</td><td class="p-2 border">32 - 52</td><td class="p-2 border">25%</td></tr>
+                            <tr><td class="p-2 border">6</td><td class="p-2 border">52 - 80</td><td class="p-2 border">30%</td></tr>
+                            <tr><td class="p-2 border">7</td><td class="p-2 border"> 80</td><td class="p-2 border">35%</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -83,13 +83,13 @@
         let subTab = 0; // 0: Cố định, 1: Thay đổi
         const fmt = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
         const taxData = [
-            { b: 1, limit: 5000000, rate: 0.05, sub: 0, text: "Đến 05", quick: "5% TNTT" },
-            { b: 2, limit: 10000000, rate: 0.10, sub: 250000, text: "Trên 05 đến 10", quick: "10% TNTT - 250.000" },
-            { b: 3, limit: 18000000, rate: 0.15, sub: 750000, text: "Trên 10 đến 18", quick: "15% TNTT - 750.000" },
-            { b: 4, limit: 32000000, rate: 0.20, sub: 1650000, text: "Trên 18 đến 32", quick: "20% TNTT - 1.650.000" },
-            { b: 5, limit: 52000000, rate: 0.25, sub: 3250000, text: "Trên 32 đến 52", quick: "25% TNTT - 3.250.000" },
-            { b: 6, limit: 80000000, rate: 0.30, sub: 5850000, text: "Trên 52 đến 80", quick: "30% TNTT - 5.850.000" },
-            { b: 7, limit: Infinity, rate: 0.35, sub: 9850000, text: "Trên 80", quick: "35% TNTT - 9.850.000" }
+            { b: 1, limit: 5000000, rate: 0.05, sub: 0, text: "<= 05", quick: "5% TNTT" },
+            { b: 2, limit: 10000000, rate: 0.10, sub: 250000, text: "05 - 10", quick: "10% TNTT - 0,25 trđ" },
+            { b: 3, limit: 18000000, rate: 0.15, sub: 750000, text: "10 - 18", quick: "15% TNTT - 0,75 trđ" },
+            { b: 4, limit: 32000000, rate: 0.20, sub: 1650000, text: "18 - 32", quick: "20% TNTT - 1,65 trđ" },
+            { b: 5, limit: 52000000, rate: 0.25, sub: 3250000, text: "32 - 52", quick: "25% TNTT - 3,25 trđ" },
+            { b: 6, limit: 80000000, rate: 0.30, sub: 5850000, text: "52 - 80", quick: "30% TNTT - 5,85 trđ" },
+            { b: 7, limit: Infinity, rate: 0.35, sub: 9850000, text: ">80", quick: "35% TNTT - 9,85 trđ" }
         ];
 
         function switchMainTab(t) {
@@ -117,12 +117,12 @@
                 title.innerText = "Mục 3: Quyết toán hoàn thuế (Theo năm)";
                 area.innerHTML = `
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-sm font-bold">Tổng thu nhập (GROSS) năm</label><input type="number" id="v-1" value="216000000" oninput="runCalc()" class="input-custom"></div>
-                        <div><label class="text-sm font-bold">Tổng bảo hiểm đã đóng năm</label><input type="number" id="v-bh-sum" value="22680000" oninput="runCalc()" class="input-custom"></div>
+                        <div><label class="text-sm font-bold">Tổng thu nhập (GROSS)</label><input type="number" id="v-1" value="216000000" oninput="runCalc()" class="input-custom"></div>
+                        <div><label class="text-sm font-bold">Tổng bảo hiểm bắt buộc đã đóng</label><input type="number" id="v-bh-sum" value="22680000" oninput="runCalc()" class="input-custom"></div>
                         <div><label class="text-sm font-bold">Số người phụ thuộc</label><input type="number" id="v-2" value="0" oninput="runCalc()" class="input-custom"></div>
                         <div><label class="text-sm font-bold">Số tháng phụ thuộc</label><input type="number" id="v-months" value="0" oninput="runCalc()" class="input-custom"></div>
-                        <div><label class="text-sm font-bold">Số thuế đã khấu trừ</label><input type="number" id="v-paid" value="1000000" oninput="runCalc()" class="input-custom"></div>
-                        <div><label class="text-sm font-bold text-blue-600">Số tiền được hoàn (i)</label><input type="text" id="v-res" readonly class="input-custom bg-blue-50 font-bold text-blue-600"></div>
+                        <div><label class="text-sm font-bold">Số thuế TNCN đã khấu trừ</label><input type="number" id="v-paid" value="1000000" oninput="runCalc()" class="input-custom"></div>
+                        <div><label class="font-bold text-[#ff6000]">Số tiền thuế được hoàn</label><input type="text" id="v-res" readonly class="input-custom bg-orange-50 font-bold text-[#ff6000] max-w-[200px]"></div>
                     </div>`;
             } else {
                 title.innerText = `Tính từ lương ${currentTab.toUpperCase()} - ${subTab === 0 ? 'Cố định' : 'Thay đổi 12 tháng'}`;
