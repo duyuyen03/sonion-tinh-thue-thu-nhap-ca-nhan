@@ -3,91 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tính Thuế TNCN Chuyên Nghiệp</title>
+    <title>Tính Thuế TNCN - Custom Theme</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f4f7fa; color: #333; }
-        .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: bold; }
+        body { font-family: 'Roboto', sans-serif; background-color: #ffffff; color: #333; }
+        /* Màu chủ đạo Cam #ff6000 */
+        .bg-primary { background-color: #ff6000; }
+        .text-primary { color: #ff6000; }
+        .border-primary { border-color: #ff6000; }
+        /* Màu Xám #808080 */
+        .text-secondary { color: #808080; }
+        .border-secondary { border-color: #808080; }
+        
+        .tab-active { border-bottom: 3px solid #ff6000; color: #ff6000; font-weight: bold; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <div class="max-w-4xl mx-auto space-y-6">
-        <div class="bg-white rounded-t-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div class="flex border-b">
+        <div class="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+            <div class="flex border-b border-gray-200">
                 <button onclick="switchMode('fixed')" id="tabFixed" class="flex-1 py-4 text-center tab-active transition">Lương cố định hàng tháng</button>
-                <button onclick="switchMode('variable')" id="tabVariable" class="flex-1 py-4 text-center text-gray-500 hover:bg-gray-50 transition">Lương thay đổi (12 tháng)</button>
+                <button onclick="switchMode('variable')" id="tabVariable" class="flex-1 py-4 text-center text-secondary hover:bg-orange-50 transition">Lương thay đổi (12 tháng)</button>
             </div>
 
-            <div class="p-6 md:p-8">
-                <div class="flex flex-col md:flex-row md:items-center mb-6 bg-blue-50 p-4 rounded-lg">
-                    <label class="w-full md:w-1/3 font-bold text-blue-800 flex items-center mb-2 md:mb-0">
-                        👥 Số lượng người phụ thuộc:
-                    </label>
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="flex items-center space-x-4 bg-orange-50 p-4 rounded-lg border border-orange-100">
+                    <label class="font-bold text-gray-700">👥 Số lượng người phụ thuộc:</label>
                     <input type="number" id="dependents" value="0" oninput="calculateAll()"
-                        class="w-full md:w-20 border border-blue-300 rounded px-3 py-2 text-center outline-none focus:ring-2 focus:ring-blue-400">
+                        class="w-24 border border-secondary rounded px-3 py-2 text-center outline-none focus:border-primary">
                 </div>
 
                 <div id="modeFixed" class="space-y-4">
                     <div class="flex flex-col md:flex-row md:items-center">
-                        <label class="w-full md:w-1/3 font-medium italic text-gray-600">Tổng thu nhập NET/tháng:</label>
+                        <label class="w-full md:w-1/3 font-medium text-secondary italic">Tổng thu nhập NET/tháng:</label>
                         <input type="number" id="fixedIncome" value="15000000" oninput="calculateAll()"
-                            class="w-full md:w-2/3 border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500">
+                            class="w-full md:w-2/3 border border-gray-300 rounded px-4 py-2.5 outline-none focus:border-primary transition-all">
                     </div>
                 </div>
 
                 <div id="modeVariable" class="hidden">
-                    <p class="text-sm text-gray-500 mb-4 font-italic">* Nhập thu nhập thực nhận (NET) từng tháng:</p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="monthlyInputs">
-                        </div>
+                    <p class="text-sm text-secondary mb-4 italic">* Nhập thu nhập thực nhận (NET) từng tháng:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="monthlyInputs"></div>
                 </div>
 
-                <div class="mt-8 border-t border-dashed pt-6">
-                    <div class="bg-blue-600 text-white p-5 rounded-lg shadow-inner">
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg">Tổng thuế TNCN cả năm:</span>
-                            <span id="totalTaxYear" class="text-2xl font-bold underline">0 VNĐ</span>
+                <div class="mt-8 pt-6 border-t border-dashed border-secondary">
+                    <div class="bg-primary text-white p-6 rounded-xl shadow-lg relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">💸</div>
+                        
+                        <div class="flex justify-between items-center border-b border-orange-400 pb-3 mb-3">
+                            <span class="text-lg font-light">Tổng thuế TNCN cả năm:</span>
+                            <span id="totalTaxYear" class="text-3xl font-bold">0 VNĐ</span>
                         </div>
-                        <div class="flex justify-between items-center mt-2 text-blue-100 text-sm">
-                            <span>Trung bình mỗi tháng:</span>
-                            <span id="avgTaxMonth">0 VNĐ</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm opacity-90">Trung bình mỗi tháng phải nộp:</span>
+                            <span id="avgTaxMonth" class="text-xl font-semibold">0 VNĐ</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="explanationArea" class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-            <h3 class="font-bold text-gray-700 mb-4">Chi tiết cách tính (Dựa trên trung bình tháng):</h3>
-            <div class="space-y-2 text-sm md:text-base">
-                <div class="flex justify-between border-b pb-2"><span>Giảm trừ bản thân:</span><b>11.000.000đ</b></div>
-                <div class="flex justify-between border-b pb-2"><span>Giảm trừ gia cảnh:</span><b id="exDep">0đ</b></div>
-                <div class="flex justify-between border-b pb-2 text-blue-600"><span>Thu nhập tính thuế bình quân:</span><b id="exTaxable">0đ</b></div>
-                <div class="flex justify-between pt-2 font-bold text-red-600"><span>Thuế TNCN bình quân tháng:</span><b id="exFinal">0đ</b></div>
+        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            <h3 class="font-bold text-gray-700 uppercase text-xs tracking-widest mb-4 border-l-4 border-primary pl-2">Chi tiết tính toán (Bình quân)</h3>
+            <div class="space-y-3 text-sm md:text-base">
+                <div class="flex justify-between border-b border-gray-100 pb-2">
+                    <span class="text-secondary">Giảm trừ bản thân</span>
+                    <span class="font-medium">11.000.000</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-100 pb-2">
+                    <span class="text-secondary">Giảm trừ người phụ thuộc</span>
+                    <span id="exDep" class="font-medium">0</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-100 pb-2 text-primary">
+                    <span class="font-semibold">Thu nhập tính thuế bình quân</span>
+                    <span id="exTaxable" class="font-bold">0</span>
+                </div>
+                <div class="flex justify-between pt-2 text-lg font-bold text-primary">
+                    <span>Thuế TNCN bình quân tháng</span>
+                    <span id="exFinal">0</span>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-            <table class="w-full text-center border-collapse">
-                <thead class="bg-gray-100 font-bold text-gray-700">
-                    <tr>
-                        <th class="p-3 border">Bậc</th>
-                        <th class="p-3 border">Thu nhập tính thuế (Triệu đồng)</th>
-                        <th class="p-3 border">Thuế suất</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600">
-                    <tr><td class="border p-2">1</td><td class="border p-2">Đến 05</td><td class="border p-2">5%</td></tr>
-                    <tr><td class="border p-2">2</td><td class="border p-2">Trên 05 đến 10</td><td class="border p-2">10%</td></tr>
-                    <tr><td class="border p-2">3</td><td class="border p-2">Trên 10 đến 18</td><td class="border p-2">15%</td></tr>
-                    <tr><td class="border p-2">4</td><td class="border p-2">Trên 18 đến 32</td><td class="border p-2">20%</td></tr>
-                    <tr><td class="border p-2">5</td><td class="border p-2">Trên 32 đến 52</td><td class="border p-2">25%</td></tr>
-                    <tr><td class="border p-2">6</td><td class="border p-2">Trên 52 đến 80</td><td class="border p-2">30%</td></tr>
-                    <tr><td class="border p-2">7</td><td class="border p-2">Trên 80</td><td class="border p-2">35%</td></tr>
-                </tbody>
-            </table>
+        <div class="space-y-3">
+            <h2 class="text-sm font-bold text-secondary uppercase tracking-widest">Bảng thuế suất lũy tiến</h2>
+            <div class="overflow-x-auto rounded border border-secondary shadow-sm">
+                <table class="w-full text-center border-collapse bg-white">
+                    <thead class="bg-gray-100 border-b border-secondary">
+                        <tr>
+                            <th class="p-3 border-r border-gray-300 font-bold text-gray-700 w-16">Bậc</th>
+                            <th class="p-3 border-r border-gray-300 font-bold text-gray-700">Thu nhập tính thuế (Triệu VNĐ)</th>
+                            <th class="p-3 font-bold text-gray-700">Thuế suất</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600">
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">1</td><td class="p-2 border border-gray-200">Đến 05</td><td class="p-2 border border-gray-200 font-bold">5%</td></tr>
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">2</td><td class="p-2 border border-gray-200">Trên 05 đến 10</td><td class="p-2 border border-gray-200 font-bold">10%</td></tr>
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">3</td><td class="p-2 border border-gray-200">Trên 10 đến 18</td><td class="p-2 border border-gray-200 font-bold">15%</td></tr>
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">4</td><td class="p-2 border border-gray-200">Trên 18 đến 32</td><td class="p-2 border border-gray-200 font-bold">20%</td></tr>
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">5</td><td class="p-2 border border-gray-200">Trên 32 đến 52</td><td class="p-2 border border-gray-200 font-bold">25%</td></tr>
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">6</td><td class="p-2 border border-gray-200">Trên 52 đến 80</td><td class="p-2 border border-gray-200 font-bold">30%</td></tr>
+                        <tr class="hover:bg-orange-50"><td class="p-2 border border-gray-200">7</td><td class="p-2 border border-gray-200">Trên 80</td><td class="p-2 border border-gray-200 font-bold">35%</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -95,13 +117,12 @@
         let currentMode = 'fixed';
         const format = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
 
-        // Tự động tạo 12 ô nhập lương cho 12 tháng
         const monthlyContainer = document.getElementById('monthlyInputs');
         for (let i = 1; i <= 12; i++) {
             monthlyContainer.innerHTML += `
                 <div class="flex flex-col">
-                    <label class="text-xs font-bold text-gray-500 mb-1 ml-1">Tháng ${i}</label>
-                    <input type="number" class="month-input border rounded p-2 text-sm focus:border-blue-500" value="15000000" oninput="calculateAll()">
+                    <label class="text-[10px] font-bold text-secondary uppercase ml-1">Tháng ${i}</label>
+                    <input type="number" class="month-input border border-gray-300 rounded p-2 text-sm focus:border-primary outline-none" value="15000000" oninput="calculateAll()">
                 </div>
             `;
         }
@@ -110,12 +131,12 @@
             currentMode = mode;
             document.getElementById('modeFixed').classList.toggle('hidden', mode !== 'fixed');
             document.getElementById('modeVariable').classList.toggle('hidden', mode !== 'variable');
-            document.getElementById('tabFixed').className = mode === 'fixed' ? 'flex-1 py-4 text-center tab-active' : 'flex-1 py-4 text-center text-gray-500';
-            document.getElementById('tabVariable').className = mode === 'variable' ? 'flex-1 py-4 text-center tab-active' : 'flex-1 py-4 text-center text-gray-500';
+            document.getElementById('tabFixed').className = mode === 'fixed' ? 'flex-1 py-4 text-center tab-active' : 'flex-1 py-4 text-center text-secondary hover:bg-orange-50';
+            document.getElementById('tabVariable').className = mode === 'variable' ? 'flex-1 py-4 text-center tab-active' : 'flex-1 py-4 text-center text-secondary hover:bg-orange-50';
             calculateAll();
         }
 
-        function getTax(taxable) {
+        function getTaxAmount(taxable) {
             if (taxable <= 0) return 0;
             if (taxable <= 5000000) return taxable * 0.05;
             if (taxable <= 10000000) return taxable * 0.1 - 250000;
@@ -131,19 +152,31 @@
             const pCut = 11000000;
             const dCut = deps * 4400000;
             let totalYearTax = 0;
-            let avgIncome = 0;
+            let totalIncome = 0;
 
             if (currentMode === 'fixed') {
                 const income = parseFloat(document.getElementById('fixedIncome').value) || 0;
-                let taxable = income - pCut - dCut;
-                let monthlyTax = getTax(taxable);
-                totalYearTax = monthlyTax * 12;
-                avgIncome = income;
+                totalIncome = income * 12;
+                totalYearTax = getTaxAmount(income - pCut - dCut) * 12;
             } else {
-                const inputs = document.querySelectorAll('.month-input');
-                let totalIncome = 0;
-                inputs.forEach(input => {
+                document.querySelectorAll('.month-input').forEach(input => {
                     let income = parseFloat(input.value) || 0;
                     totalIncome += income;
-                    let taxable = income - pCut - dCut;
-                    totalYearTax
+                    totalYearTax += getTaxAmount(income - pCut - dCut);
+                });
+            }
+
+            document.getElementById('totalTaxYear').innerText = format(totalYearTax) + " VNĐ";
+            document.getElementById('avgTaxMonth').innerText = format(totalYearTax / 12) + " VNĐ";
+            
+            const avgIncome = totalIncome / 12;
+            const avgTaxable = (avgIncome - pCut - dCut) > 0 ? (avgIncome - pCut - dCut) : 0;
+            document.getElementById('exDep').innerText = `= ${format(dCut)}`;
+            document.getElementById('exTaxable').innerText = `= ${format(avgTaxable)}`;
+            document.getElementById('exFinal').innerText = `${format(totalYearTax / 12)}`;
+        }
+
+        window.onload = calculateAll;
+    </script>
+</body>
+</html>
