@@ -3,209 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tính Thuế TNCN - Diễn giải chi tiết</title>
+    <title>Công cụ tính Thuế TNCN Đa năng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f8fafc; color: #333; }
+        body { font-family: 'Roboto', sans-serif; background-color: #f1f5f9; }
         .bg-primary { background-color: #ff6000; }
         .text-primary { color: #ff6000; }
-        .text-secondary { color: #808080; }
-        .tab-active { border-bottom: 3px solid #ff6000; color: #ff6000; font-weight: bold; }
+        .sidebar-item { transition: all 0.3s; cursor: pointer; border-left: 4px solid transparent; }
+        .sidebar-item.active { background-color: #fff7ed; border-left-color: #ff6000; color: #ff6000; font-weight: bold; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .input-custom { width: 140px; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; text-align: center; outline: none; transition: border 0.2s; }
-        .input-custom:focus { border-color: #ff6000; box-shadow: 0 0 0 2px rgba(255, 96, 0, 0.1); }
+        .input-box { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; outline: none; width: 100%; text-align: right; }
+        .input-box:focus { border-color: #ff6000; ring: 1px solid #ff6000; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="min-h-screen flex flex-col md:flex-row">
 
-    <div class="max-w-4xl mx-auto space-y-6">
-        <div class="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
-            <div class="flex border-b border-gray-200 bg-gray-50">
-                <button onclick="switchMode('fixed')" id="tabFixed" class="flex-1 py-4 text-center tab-active">
-                    <i class="fa-solid fa-calendar-check mr-2"></i>Lương cố định hàng tháng
-                </button>
-                <button onclick="switchMode('variable')" id="tabVariable" class="flex-1 py-4 text-center text-secondary hover:bg-orange-50">
-                    <i class="fa-solid fa-chart-line mr-2"></i>Lương thay đổi (12 tháng)
-                </button>
+    <div class="w-full md:w-72 bg-white shadow-lg z-10">
+        <div class="p-6 border-b">
+            <h1 class="text-xl font-bold text-gray-800 flex items-center">
+                <i class="fa-solid fa-calculator text-primary mr-2"></i> THUẾ TNCN
+            </h1>
+        </div>
+        <nav class="mt-4">
+            <div onclick="showTab('net')" id="menu-net" class="sidebar-item active p-4 flex items-center hover:bg-gray-50">
+                <i class="fa-solid fa-wallet w-8 text-center"></i> 1. Tính từ lương NET
             </div>
+            <div onclick="showTab('gross')" id="menu-gross" class="sidebar-item p-4 flex items-center hover:bg-gray-50">
+                <i class="fa-solid fa-money-bill-trend-up w-8 text-center"></i> 2. Tính từ lương GROSS
+            </div>
+            <div onclick="showTab('refund')" id="menu-refund" class="sidebar-item p-4 flex items-center hover:bg-gray-50">
+                <i class="fa-solid fa-hand-holding-dollar w-8 text-center"></i> 3. Quyết toán hoàn thuế
+            </div>
+        </nav>
+        <div class="p-6 mt-10 text-xs text-gray-400 italic">
+            * Dữ liệu tính toán dựa trên quy định thuế hiện hành.
+        </div>
+    </div>
 
-            <div class="p-6 md:p-8 space-y-5">
-                <div class="space-y-4 bg-orange-50/50 p-5 rounded-xl border border-orange-100">
-                    <div class="flex items-center justify-between max-w-md">
-                        <label class="font-bold text-gray-700 flex items-center">
-                            <i class="fa-solid fa-users text-primary w-6"></i> Số lượng người phụ thuộc * :
-                        </label>
-                        <input type="number" id="dependents" value="0" oninput="calculateAll()" class="input-custom">
-                    </div>
-
-                    <div id="modeFixed" class="flex items-center justify-between max-w-md">
-                        <label class="font-bold text-gray-700 flex items-center">
-                            <i class="fa-solid fa-wallet text-primary w-6"></i> Tổng thu nhập (NET) * :
-                        </label>
-                        <input type="number" id="fixedIncome" value="15000000" oninput="calculateAll()" class="input-custom">
-                    </div>
-
-                    <p class="text-xs text-secondary italic mt-2">
-                        <i class="fa-solid fa-circle-info mr-1"></i> Ô đánh dấu * bắt buộc điền dữ liệu
-                    </p>
-                </div>
-
-                <div id="modeVariable" class="hidden">
-                    <div class="grid grid-cols-3 md:grid-cols-6 gap-3" id="monthlyInputs"></div>
-                </div>
-
-                <div class="mt-6">
-                    <div class="bg-primary text-white p-6 rounded-2xl shadow-lg">
-                        <div class="flex justify-between items-center border-b border-orange-400 pb-3">
-                            <span class="text-lg font-medium">Số thuế TNCN cần nộp (Cả năm):</span>
-                            <span id="totalTaxYear" class="text-3xl font-bold">0 VNĐ</span>
+    <div class="flex-1 p-4 md:p-10 overflow-y-auto">
+        <div class="max-w-4xl mx-auto">
+            
+            <div id="tab-net" class="tab-content space-y-6">
+                <div class="card p-6 md:p-8">
+                    <h2 class="text-lg font-bold mb-6 text-gray-700 border-b pb-2 italic">Cách 1: Tính dựa trên mức lương NET (Theo tháng)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-sm font-medium text-gray-600"><i class="fa-solid fa-coins mr-1"></i> Tổng thu nhập (NET) *</label>
+                                <input type="number" id="net-income" value="15000000" oninput="calcNet()" class="input-box max-w-[180px]">
+                            </div>
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-sm font-medium text-gray-600"><i class="fa-solid fa-users mr-1"></i> Số người phụ thuộc *</label>
+                                <input type="number" id="net-deps" value="0" oninput="calcNet()" class="input-box max-w-[180px]">
+                            </div>
+                            <p class="text-[11px] text-gray-400 italic mt-2">Ô đánh dấu * bắt buộc điền dữ liệu</p>
                         </div>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="text-sm opacity-90 italic">Tính trên thu nhập NET sau giảm trừ</span>
-                            <span id="avgTaxMonth" class="text-xl font-semibold">0 VNĐ/tháng</span>
+                        <div class="bg-orange-50 p-6 rounded-xl border border-orange-200 text-center">
+                            <span class="block text-sm text-orange-600 font-bold mb-1">Số thuế TNCN cần nộp:</span>
+                            <span id="net-result" class="text-3xl font-bold text-primary">0</span> <span class="text-primary font-bold">VNĐ</span>
                         </div>
                     </div>
                 </div>
+                <div id="desc-net" class="card p-6 bg-gray-50 border border-gray-200 font-mono text-sm space-y-2"></div>
             </div>
-        </div>
 
-        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm space-y-4">
-            <h3 class="font-bold text-gray-700 flex items-center">
-                <i class="fa-solid fa-calculator text-primary mr-2"></i> Diễn giải cách tính chi tiết:
-            </h3>
-            <div class="space-y-3 bg-gray-50 p-6 rounded-lg border border-gray-100 font-mono text-sm">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 border-b border-gray-200 pb-2">
-                    <span class="text-secondary">Giảm trừ bản thân</span>
-                    <span class="font-medium text-right md:text-left">= 11.000.000</span>
+            <div id="tab-gross" class="tab-content hidden space-y-6">
+                <div class="card p-6 md:p-8">
+                    <h2 class="text-lg font-bold mb-6 text-gray-700 border-b pb-2 italic">Cách 2: Tính dựa trên mức lương GROSS (Theo tháng)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-sm font-medium text-gray-600">Tổng thu nhập (GROSS) *</label>
+                                <input type="number" id="gross-income" value="18000000" oninput="calcGross()" class="input-box max-w-[180px]">
+                            </div>
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-sm font-medium text-gray-600">Mức lương đóng BH *</label>
+                                <input type="number" id="gross-bh" value="18000000" oninput="calcGross()" class="input-box max-w-[180px]">
+                            </div>
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-sm font-medium text-gray-600">Số người phụ thuộc *</label>
+                                <input type="number" id="gross-deps" value="0" oninput="calcGross()" class="input-box max-w-[180px]">
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 text-center flex flex-col justify-center">
+                            <span class="block text-sm text-blue-600 font-bold mb-1">Số thuế TNCN cần nộp:</span>
+                            <span id="gross-result" class="text-3xl font-bold text-blue-700">0</span> <span class="text-blue-700 font-bold">VNĐ</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 border-b border-gray-200 pb-2">
-                    <span class="text-secondary">Giảm trừ người phụ thuộc</span>
-                    <span id="exDep" class="font-medium text-right md:text-left">= 4.400.000 x 0 = 0</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 border-t pt-2 border-gray-200">
-                    <span class="font-bold">Tổng thu nhập tính thuế</span>
-                    <span id="exTaxable" class="font-bold text-blue-700 text-right md:text-left">= 0</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <span class="font-bold">Số thuế TNCN cần nộp</span>
-                    <span id="exFinal" class="font-bold text-primary text-right md:text-left">= 0</span>
-                </div>
-                <p id="exNote" class="text-[11px] text-secondary italic mt-4 pt-2 border-t border-dashed border-gray-300"></p>
+                <div id="desc-gross" class="card p-6 bg-gray-50 border border-gray-200 font-mono text-sm space-y-2"></div>
             </div>
-        </div>
 
-        <div class="space-y-4">
-            <h2 class="text-xs font-bold text-secondary uppercase tracking-widest">BẢNG THUẾ SUẤT THUẾ TNCN THEO TỪNG BẬC THU NHẬP</h2>
-            <div class="overflow-x-auto rounded border border-gray-300 shadow-sm">
-                <table class="w-full text-center border-collapse bg-white text-sm">
-                    <thead class="bg-gray-100 border-b">
-                        <tr>
-                            <th class="p-3 border-r font-bold text-gray-700 w-16">Bậc</th>
-                            <th class="p-3 border-r font-bold text-gray-700">Thu nhập tính thuế/tháng (triệu đồng)</th>
-                            <th class="p-3 font-bold text-gray-700">Thuế suất</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600">
-                        <tr><td class="p-2 border">1</td><td class="p-2 border text-left pl-10">Đến 05</td><td class="p-2 border">5%</td></tr>
-                        <tr><td class="p-2 border">2</td><td class="p-2 border text-left pl-10">Trên 05 đến 10</td><td class="p-2 border">10%</td></tr>
-                        <tr><td class="p-2 border">3</td><td class="p-2 border text-left pl-10">Trên 10 đến 18</td><td class="p-2 border">15%</td></tr>
-                        <tr><td class="p-2 border">4</td><td class="p-2 border text-left pl-10">Trên 18 đến 32</td><td class="p-2 border">20%</td></tr>
-                        <tr><td class="p-2 border">5</td><td class="p-2 border text-left pl-10">Trên 32 đến 52</td><td class="p-2 border">25%</td></tr>
-                        <tr><td class="p-2 border">6</td><td class="p-2 border text-left pl-10">Trên 52 đến 80</td><td class="p-2 border">30%</td></tr>
-                        <tr><td class="p-2 border">7</td><td class="p-2 border text-left pl-10">Trên 80</td><td class="p-2 border">35%</td></tr>
-                    </tbody>
-                </table>
+            <div id="tab-refund" class="tab-content hidden space-y-6">
+                <div class="card p-6 md:p-8">
+                    <h2 class="text-lg font-bold mb-6 text-gray-700 border-b pb-2 italic">Bảng tính số tiền thuế TNCN được hoàn (Theo năm)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <div class="flex flex-col"><label class="text-xs font-bold text-gray-500">TỔNG THU NHẬP (GROSS) *</label><input type="number" id="ref-gross" value="216000000" oninput="calcRefund()" class="input-box"></div>
+                            <div class="flex flex-col"><label class="text-xs font-bold text-gray-500">TỔNG BẢO HIỂM ĐÃ ĐÓNG *</label><input type="number" id="ref-bh" value="22680000" oninput="calcRefund()" class="input-box"></div>
+                            <div class="flex flex-col"><label class="text-xs font-bold text-gray-500">SỐ THUẾ ĐÃ KHẤU TRỪ (ĐÃ NỘP) *</label><input type="number" id="ref-paid" value="1000000" oninput="calcRefund()" class="input-box"></div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex flex-col"><label class="text-xs font-bold text-gray-500">SỐ NGƯỜI PHỤ THUỘC</label><input type="number" id="ref-deps" value="0" oninput="calcRefund()" class="input-box"></div>
+                            <div class="flex flex-col"><label class="text-xs font-bold text-gray-500">SỐ THÁNG PHỤ THUỘC</label><input type="number" id="ref-months" value="0" oninput="calcRefund()" class="input-box"></div>
+                            <div id="refund-status-box" class="p-4 rounded-lg text-sm mt-4 font-bold border"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="desc-refund" class="card p-6 bg-gray-50 border border-gray-200 font-mono text-sm space-y-2"></div>
             </div>
-        </div>
 
-        <div class="space-y-4">
-            <h2 class="text-xs font-bold text-secondary uppercase tracking-widest">Hoặc tính theo BIỂU THUẾ RÚT GỌN</h2>
-            <div class="overflow-x-auto rounded border border-gray-300 shadow-sm">
-                <table class="w-full text-center border-collapse bg-white text-sm">
-                    <thead class="bg-gray-100 border-b">
-                        <tr>
-                            <th class="p-3 border-r font-bold text-gray-700 w-16">Bậc</th>
-                            <th class="p-3 border-r font-bold text-gray-700">Thu nhập tính thuế/tháng</th>
-                            <th class="p-3 border-r font-bold text-gray-700">Thuế suất</th>
-                            <th class="p-3 font-bold text-gray-700">Tính số thuế phải nộp</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600">
-                        <tr><td class="p-2 border">1</td><td class="p-2 border">Đến 05tr</td><td class="p-2 border">5%</td><td class="p-2 border text-left">5% TNTT</td></tr>
-                        <tr><td class="p-2 border">2</td><td class="p-2 border">Trên 05 đến 10tr</td><td class="p-2 border">10%</td><td class="p-2 border text-left">10% TNTT - 0,25tr</td></tr>
-                        <tr><td class="p-2 border">3</td><td class="p-2 border">Trên 10 đến 18tr</td><td class="p-2 border">15%</td><td class="p-2 border text-left">15% TNTT - 0,75tr</td></tr>
-                        <tr><td class="p-2 border">4</td><td class="p-2 border">Trên 18 đến 32tr</td><td class="p-2 border">20%</td><td class="p-2 border text-left">20% TNTT - 1,65tr</td></tr>
-                        <tr><td class="p-2 border">5</td><td class="p-2 border">Trên 32 đến 52tr</td><td class="p-2 border">25%</td><td class="p-2 border text-left">25% TNTT - 3,25tr</td></tr>
-                        <tr><td class="p-2 border">6</td><td class="p-2 border">Trên 52 đến 80tr</td><td class="p-2 border">30%</td><td class="p-2 border text-left">30% TNTT - 5,85tr</td></tr>
-                        <tr><td class="p-2 border">7</td><td class="p-2 border">Trên 80tr</td><td class="p-2 border">35%</td><td class="p-2 border text-left">35% TNTT - 9,85tr</td></tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 
     <script>
-        let currentMode = 'fixed';
         const format = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
 
-        const monthlyContainer = document.getElementById('monthlyInputs');
-        for (let i = 1; i <= 12; i++) {
-            monthlyContainer.innerHTML += `<div class="flex flex-col"><label class="text-[9px] font-bold text-secondary text-center uppercase">T${i}</label><input type="number" class="month-input border border-gray-300 rounded p-1 text-xs text-center focus:border-primary outline-none" value="15000000" oninput="calculateAll()"></div>`;
+        function showTab(tabId) {
+            // Ẩn tất cả nội dung
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            // Hiện nội dung được chọn
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            // Cập nhật Menu
+            document.querySelectorAll('.sidebar-item').forEach(m => m.classList.remove('active'));
+            document.getElementById('menu-' + tabId).classList.add('active');
         }
 
-        function switchMode(mode) {
-            currentMode = mode;
-            document.getElementById('modeFixed').classList.toggle('hidden', mode !== 'fixed');
-            document.getElementById('modeVariable').classList.toggle('hidden', mode !== 'variable');
-            document.getElementById('tabFixed').className = mode === 'fixed' ? 'flex-1 py-4 text-center tab-active' : 'flex-1 py-4 text-center text-secondary hover:bg-orange-50';
-            document.getElementById('tabVariable').className = mode === 'variable' ? 'flex-1 py-4 text-center tab-active' : 'flex-1 py-4 text-center text-secondary hover:bg-orange-50';
-            calculateAll();
+        function getTax(taxable) {
+            if (taxable <= 0) return 0;
+            if (taxable <= 5000000) return taxable * 0.05;
+            if (taxable <= 10000000) return taxable * 0.1 - 250000;
+            if (taxable <= 18000000) return taxable * 0.15 - 750000;
+            if (taxable <= 32000000) return taxable * 0.2 - 1650000;
+            if (taxable <= 52000000) return taxable * 0.25 - 3250000;
+            if (taxable <= 80000000) return taxable * 0.3 - 5850000;
+            return taxable * 0.35 - 9850000;
         }
 
-        function getTaxDetails(taxable) {
-            if (taxable <= 0) return { tax: 0, desc: "0 x 5% - 0" };
-            if (taxable <= 5000000) return { tax: taxable * 0.05, desc: `${format(taxable)} x 5% - 0` };
-            if (taxable <= 10000000) return { tax: taxable * 0.1 - 250000, desc: `${format(taxable)} x 10% - 250.000` };
-            if (taxable <= 18000000) return { tax: taxable * 0.15 - 750000, desc: `${format(taxable)} x 15% - 750.000` };
-            if (taxable <= 32000000) return { tax: taxable * 0.2 - 1650000, desc: `${format(taxable)} x 20% - 1.650.000` };
-            if (taxable <= 52000000) return { tax: taxable * 0.25 - 3250000, desc: `${format(taxable)} x 25% - 3.250.000` };
-            if (taxable <= 80000000) return { tax: taxable * 0.3 - 5850000, desc: `${format(taxable)} x 30% - 5.850.000` };
-            return { tax: taxable * 0.35 - 9850000, desc: `${format(taxable)} x 35% - 9.850.000` };
+        // TÍNH NET
+        function calcNet() {
+            const income = parseFloat(document.getElementById('net-income').value) || 0;
+            const deps = parseInt(document.getElementById('net-deps').value) || 0;
+            const taxable = Math.max(0, income - 11000000 - (deps * 4400000));
+            const tax = getTax(taxable);
+            
+            document.getElementById('net-result').innerText = format(tax);
+            document.getElementById('desc-net').innerHTML = `
+                <div>Giảm trừ bản thân: = 11.000.000</div>
+                <div>Giảm trừ người phụ thuộc: = 4.400.000 x ${deps} = ${format(deps * 4400000)}</div>
+                <div class="font-bold text-blue-600">Tổng thu nhập tính thuế: = ${format(income)} - 11.000.000 - ${format(deps*4400000)} = ${format(taxable)}</div>
+                <div class="font-bold text-primary">Số thuế TNCN cần nộp: = ${format(taxable)} x ... = ${format(tax)}</div>
+            `;
         }
 
-        function calculateAll() {
-            const deps = parseInt(document.getElementById('dependents').value) || 0;
-            const pCut = 11000000;
-            const dCut = deps * 4400000;
-            let totalYearTax = 0;
-            let avgIncome = 0;
+        // TÍNH GROSS
+        function calcGross() {
+            const income = parseFloat(document.getElementById('gross-income').value) || 0;
+            const bhLương = parseFloat(document.getElementById('gross-bh').value) || 0;
+            const deps = parseInt(document.getElementById('gross-deps').value) || 0;
 
-            if (currentMode === 'fixed') {
-                avgIncome = parseFloat(document.getElementById('fixedIncome').value) || 0;
-                totalYearTax = getTaxDetails(avgIncome - pCut - dCut).tax * 12;
+            const bhxh = bhLương * 0.08;
+            const bhyt = bhLương * 0.015;
+            const bhtn = bhLương * 0.01;
+            const totalBH = bhxh + bhyt + bhtn;
+            
+            const taxable = Math.max(0, income - totalBH - 11000000 - (deps * 4400000));
+            const tax = getTax(taxable);
+
+            document.getElementById('gross-result').innerText = format(tax);
+            document.getElementById('desc-gross').innerHTML = `
+                <div>BHXH (8%): ${format(bhxh)} | BHYT (1.5%): ${format(bhyt)} | BHTN (1%): ${format(bhtn)}</div>
+                <div>Giảm trừ bản thân: 11.000.000</div>
+                <div class="font-bold text-blue-600">Thu nhập tính thuế: = ${format(income)} - ${format(totalBH)} - 11.000.000 - ... = ${format(taxable)}</div>
+                <div class="font-bold text-blue-700">Số thuế phải nộp: ${format(tax)}</div>
+            `;
+        }
+
+        // QUYẾT TOÁN HOÀN THUẾ
+        function calcRefund() {
+            const gross = parseFloat(document.getElementById('ref-gross').value) || 0;
+            const bh = parseFloat(document.getElementById('ref-bh').value) || 0;
+            const paid = parseFloat(document.getElementById('ref-paid').value) || 0;
+            const deps = parseInt(document.getElementById('ref-deps').value) || 0;
+            const months = parseInt(document.getElementById('ref-months').value) || 0;
+
+            const totalGiaCanh = 132000000 + (deps * months * 4400000);
+            const taxableYear = Math.max(0, gross - bh - totalGiaCanh);
+            const taxMonth = getTax(taxableYear / 12);
+            const taxYear = taxMonth * 12;
+            const refund = paid - taxYear;
+
+            const box = document.getElementById('refund-status-box');
+            if(refund >= 0) {
+                box.className = "p-4 rounded-lg text-sm mt-4 font-bold border border-green-200 bg-green-50 text-green-700";
+                box.innerHTML = `<i class="fa-solid fa-circle-check"></i> Bạn được hoàn thuế: ${format(refund)} VNĐ`;
             } else {
-                let sum = 0;
-                document.querySelectorAll('.month-input').forEach(input => {
-                    let inc = parseFloat(input.value) || 0;
-                    sum += inc;
-                    totalYearTax += getTaxDetails(inc - pCut - dCut).tax;
-                });
-                avgIncome = sum / 12;
+                box.className = "p-4 rounded-lg text-sm mt-4 font-bold border border-red-200 bg-red-50 text-red-700";
+                box.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Bạn cần nộp thêm: ${format(Math.abs(refund))} VNĐ`;
             }
 
-            const taxableAvg = Math.max(0, avgIncome - pCut - dCut);
-            const finalTaxDetails = getTaxDetails(taxableAvg);
-
-            document.getElementById('totalTaxYear').innerText = format(totalYearTax) + " VNĐ";
-            document.getElementById('avgTaxMonth').innerText = format(totalYearTax / 12) + " VNĐ";
-            document.getElementById('exDep').innerText = `= 4.400.000 x ${deps} = ${format(dCut)}`;
-            document.getElementById('exTaxable').innerText = `= ${format(avgIncome)} - 11.000.000 - ${format(dCut)} = ${format(taxableAvg)}`;
-            document.getElementById('exFinal').innerText = `= ${finalTaxDetails.desc} = ${format(finalTaxDetails.tax)}`;
-            document.getElementById('exNote').innerText = `(Mức thuế TNCN áp dụng cho thu nhập tính thuế ${format(taxableAvg)}đ/tháng)`;
+            document.getElementById('desc-refund').innerHTML = `
+                <div>Thu nhập tính thuế năm: ${format(taxableYear)}</div>
+                <div>Thuế phải nộp trung bình tháng: ${format(taxMonth)}</div>
+                <div class="font-bold">Tổng thuế phải nộp cả năm: ${format(taxYear)}</div>
+                <div class="font-bold text-orange-600">Kết quả (Đã nộp - Phải nộp): ${format(paid)} - ${format(taxYear)} = ${format(refund)}</div>
+            `;
         }
-        window.onload = calculateAll;
+
+        // Khởi tạo
+        window.onload = () => {
+            calcNet();
+            calcGross();
+            calcRefund();
+        };
     </script>
 </body>
 </html>
