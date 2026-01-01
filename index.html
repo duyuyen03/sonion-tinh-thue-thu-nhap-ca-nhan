@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công cụ tính Thuế TNCN - Diễn giải chuẩn theo hình</title>
+    <title>Công cụ tính Thuế TNCN - Full Diễn Giải 3 Mục</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -12,11 +12,9 @@
         .sidebar-item.active { background-color: #fff7ed; border-left: 4px solid #ff6000; color: #ff6000; font-weight: bold; }
         .input-custom { border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; outline: none; transition: all 0.2s; text-align: right; width: 100%; max-width: 320px; }
         .input-custom:focus { border-color: #ff6000; box-shadow: 0 0 0 2px rgba(255, 96, 0, 0.1); }
-        .interpretation-box { background-color: #fdfdfd; border-radius: 12px; border: 1px solid #edf2f7; padding: 24px; }
-        .step-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: #4a5568; line-height: 1.6; }
-        .step-label { flex: 1.2; font-weight: 500; }
-        .step-value { flex: 2; text-align: left; padding-left: 10px; }
-        .info-icon { color: #f59e0b; font-style: italic; font-size: 0.9em; margin-left: 4px; }
+        .step-row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed #edf2f7; pb-2; }
+        .step-label { flex: 1.5; color: #4a5568; }
+        .step-value { flex: 2; text-align: left; font-weight: 500; color: #2d3748; padding-left: 15px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
@@ -24,46 +22,41 @@
     <div class="w-full md:w-72 bg-white shadow-lg z-10">
         <div class="p-6 border-b text-xl font-bold text-gray-800"><i class="fa-solid fa-calculator text-[#ff6000] mr-2"></i> THUẾ TNCN</div>
         <nav class="mt-4">
-            <div onclick="showTab('net')" id="menu-net" class="sidebar-item active p-4 cursor-pointer flex items-center hover:bg-gray-50"><i class="fa-solid fa-wallet w-8 text-center"></i> 1. Tính từ lương NET</div>
-            <div onclick="showTab('gross')" id="menu-gross" class="sidebar-item p-4 cursor-pointer flex items-center hover:bg-gray-50"><i class="fa-solid fa-money-bill-trend-up w-8 text-center"></i> 2. Tính từ lương GROSS</div>
-            <div onclick="showTab('refund')" id="menu-refund" class="sidebar-item p-4 cursor-pointer flex items-center hover:bg-gray-50"><i class="fa-solid fa-hand-holding-dollar w-8 text-center"></i> 3. Quyết toán hoàn thuế</div>
+            <div onclick="switchTab('net')" id="m-net" class="sidebar-item active p-4 cursor-pointer flex items-center hover:bg-gray-50"><i class="fa-solid fa-wallet w-8 text-center"></i> 1. Tính từ lương NET</div>
+            <div onclick="switchTab('gross')" id="m-gross" class="sidebar-item p-4 cursor-pointer flex items-center hover:bg-gray-50"><i class="fa-solid fa-money-bill-trend-up w-8 text-center"></i> 2. Tính từ lương GROSS</div>
+            <div onclick="switchTab('refund')" id="m-refund" class="sidebar-item p-4 cursor-pointer flex items-center hover:bg-gray-50"><i class="fa-solid fa-hand-holding-dollar w-8 text-center"></i> 3. Quyết toán hoàn thuế</div>
         </nav>
     </div>
 
     <div class="flex-1 p-4 md:p-8 overflow-y-auto">
-        <div class="max-w-4xl mx-auto space-y-8">
+        <div class="max-w-4xl mx-auto space-y-6">
             
-            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-8 space-y-6">
-                <h2 id="tab-title" class="text-xl font-bold text-blue-600 text-center mb-8 uppercase">Cách 1: Tính thuế TNCN phải nộp dựa trên mức lương NET (Theo tháng)</h2>
-                
-                <div id="input-fields" class="space-y-5">
-                    </div>
-
-                <div id="notice-box" class="hidden p-5 rounded-lg border border-dashed border-blue-400 bg-blue-50 text-blue-800 text-sm leading-relaxed italic"></div>
-                <div class="text-xs text-gray-400 italic mt-2">Ô đánh dấu * bắt buộc điền dữ liệu</div>
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                <h2 id="title-mode" class="text-xl font-bold text-blue-600 text-center mb-8 uppercase"></h2>
+                <div id="fields-container" class="space-y-4"></div>
+                <div id="alert-box" class="hidden mt-6 p-4 rounded-lg border border-dashed border-blue-400 bg-blue-50 text-blue-800 text-sm italic"></div>
             </div>
 
-            <div class="interpretation-box shadow-sm border border-gray-100">
-                <h3 id="diag-title" class="font-bold text-gray-700 mb-8">Diễn giải cách tính thuế thu nhập cá nhân chi tiết tại bảng dưới đây:</h3>
-                <div id="diag-content" class="text-sm md:text-[15px]">
-                    </div>
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                <h3 id="diag-title" class="font-bold text-gray-700 mb-6 italic"></h3>
+                <div id="diag-body" class="text-[15px] space-y-1"></div>
             </div>
 
             <div class="space-y-4">
-                <h2 class="text-sm font-bold text-gray-600 uppercase tracking-widest border-b pb-2">Biểu thuế rút gọn</h2>
+                <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Biểu thuế rút gọn</h2>
                 <table class="w-full text-center border-collapse bg-white text-sm border border-gray-300">
                     <thead class="bg-gray-100">
-                        <tr><th class="p-3 border">Bậc</th><th class="p-3 border text-left pl-10">Thu nhập tính thuế/tháng</th><th class="p-3 border">Thuế suất</th><th class="p-3 border">Số thuế phải nộp</th></tr>
+                        <tr><th class="p-2 border">Bậc</th><th class="p-2 border">Thu nhập tính thuế/tháng</th><th class="p-2 border">Thuế suất</th><th class="p-2 border">Số thuế phải nộp</th></tr>
                     </thead>
-                    <tbody id="tax-table-body" class="text-gray-600"></tbody>
+                    <tbody id="tax-table"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        let currentTab = 'net';
-        const format = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
+        let mode = 'net';
+        const f = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
         const taxData = [
             { b: 1, limit: 5000000, rate: 0.05, sub: 0, text: "Đến 05", quick: "5% TNTT" },
             { b: 2, limit: 10000000, rate: 0.10, sub: 250000, text: "Trên 05 đến 10", quick: "10% TNTT - 250.000" },
@@ -74,131 +67,113 @@
             { b: 7, limit: Infinity, rate: 0.35, sub: 9850000, text: "Trên 80", quick: "35% TNTT - 9.850.000" }
         ];
 
-        function showTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('menu-'+tab).classList.add('active');
-            renderInputs();
-            calculate();
+        function switchTab(t) {
+            mode = t;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('m-'+t).classList.add('active');
+            renderUI();
+            calc();
         }
 
-        function renderInputs() {
-            const container = document.getElementById('input-fields');
-            const title = document.getElementById('tab-title');
+        function renderUI() {
+            const container = document.getElementById('fields-container');
+            const title = document.getElementById('title-mode');
             const diagTitle = document.getElementById('diag-title');
             
-            if(currentTab === 'net') {
-                title.innerText = "Cách 1: Tính thuế TNCN phải nộp dựa trên mức lương NET (Theo tháng)";
-                diagTitle.innerText = "Diễn giải cách tính thuế thu nhập cá nhân chi tiết tại bảng dưới đây:";
+            if(mode === 'net') {
+                title.innerText = "Cách 1: Tính thuế TNCN dựa trên mức lương NET (Tháng)";
+                diagTitle.innerText = "Diễn giải cách tính thuế TNCN (Lương NET) chi tiết:";
                 container.innerHTML = `
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Tổng thu nhập (NET) * <span class="info-icon text-blue-500">(i)</span></label><input type="number" id="val-1" value="15000000" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số lượng người phụ thuộc *</label><input type="number" id="val-2" value="0" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số thuế thu nhập cá nhân cần nộp</label><input type="text" id="res-box" readonly class="input-custom bg-blue-50/30 font-bold text-blue-600"></div>
-                `;
-            } else if(currentTab === 'gross') {
-                title.innerText = "Cách 2: Tính thuế TNCN phải nộp dựa trên mức lương GROSS (Theo tháng)";
-                diagTitle.innerText = "Diễn giải cách tính thuế thu nhập cá nhân chi tiết tại bảng dưới đây:";
+                    <div class="flex justify-between items-center"><label class="font-bold">Tổng thu nhập (NET) *</label><input type="number" id="in-1" value="15000000" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số người phụ thuộc *</label><input type="number" id="in-2" value="0" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số thuế phải nộp</label><input type="text" id="res-total" readonly class="input-custom bg-blue-50 font-bold text-blue-600"></div>`;
+            } else if(mode === 'gross') {
+                title.innerText = "Cách 2: Tính thuế TNCN dựa trên mức lương GROSS (Tháng)";
+                diagTitle.innerText = "Diễn giải cách tính thuế TNCN (Lương GROSS) chi tiết:";
                 container.innerHTML = `
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Tổng thu nhập (GROSS) * <span class="info-icon text-red-500">(i)</span></label><input type="number" id="val-1" value="18000000" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Mức lương đóng bảo hiểm *</label><input type="number" id="val-bh-salary" value="18000000" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số lượng người phụ thuộc *</label><input type="number" id="val-2" value="0" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số thuế thu nhập cá nhân cần nộp</label><input type="text" id="res-box" readonly class="input-custom bg-blue-50/30 font-bold text-blue-600"></div>
-                `;
+                    <div class="flex justify-between items-center"><label class="font-bold">Tổng thu nhập (GROSS) *</label><input type="number" id="in-1" value="18000000" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Lương đóng bảo hiểm *</label><input type="number" id="in-bh" value="18000000" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số người phụ thuộc *</label><input type="number" id="in-2" value="0" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số thuế phải nộp</label><input type="text" id="res-total" readonly class="input-custom bg-blue-50 font-bold text-blue-600"></div>`;
             } else {
-                title.innerText = "Bảng tính số tiền thuế thu nhập cá nhân được hoàn (Theo năm)";
-                diagTitle.innerText = "Diễn giải cách tính hoàn thuế thu nhập cá nhân (theo năm) chi tiết tại bảng dưới đây:";
+                title.innerText = "Mục 3: Quyết toán hoàn thuế TNCN (Năm)";
+                diagTitle.innerText = "Diễn giải cách tính hoàn thuế thu nhập cá nhân (theo năm) chi tiết:";
                 container.innerHTML = `
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Tổng thu nhập (GROSS) *</label><input type="number" id="val-1" value="216000000" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Tổng tiền bảo hiểm bắt buộc đã đóng *</label><input type="number" id="val-bh-total" value="22680000" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số lượng người phụ thuộc *</label><input type="number" id="val-2" value="0" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số tháng phụ thuộc *</label><input type="number" id="val-months" value="0" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-gray-700">Số thuế thu nhập cá nhân đã khấu trừ *</label><input type="number" id="val-paid" value="1000000" oninput="calculate()" class="input-custom"></div>
-                    <div class="flex justify-between items-center"><label class="font-bold text-blue-600">Số tiền thuế được hoàn (i)</label><input type="text" id="res-box" readonly class="input-custom bg-blue-50/30 font-bold text-blue-600"></div>
-                `;
+                    <div class="flex justify-between items-center"><label class="font-bold">Tổng thu nhập (GROSS) *</label><input type="number" id="in-1" value="216000000" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Tổng bảo hiểm đã đóng *</label><input type="number" id="in-bh-sum" value="22680000" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số người phụ thuộc</label><input type="number" id="in-2" value="0" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số tháng phụ thuộc</label><input type="number" id="in-months" value="0" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold">Số thuế đã khấu trừ *</label><input type="number" id="in-paid" value="1000000" oninput="calc()" class="input-custom"></div>
+                    <div class="flex justify-between items-center"><label class="font-bold text-blue-600">Số tiền được hoàn (i)</label><input type="text" id="res-total" readonly class="input-custom bg-blue-50 font-bold text-blue-600"></div>`;
             }
         }
 
-        function calculate() {
-            const v1 = parseFloat(document.getElementById('val-1').value) || 0;
-            const v2 = parseInt(document.getElementById('val-2').value) || 0;
-            const resBox = document.getElementById('res-box');
-            const diag = document.getElementById('diag-content');
-            const notice = document.getElementById('notice-box');
-            notice.classList.add('hidden');
+        function calc() {
+            const v1 = parseFloat(document.getElementById('in-1').value) || 0;
+            const v2 = parseInt(document.getElementById('in-2').value) || 0;
+            const diag = document.getElementById('diag-body');
+            const alert = document.getElementById('alert-box');
+            alert.classList.add('hidden');
 
-            if(currentTab === 'net' || currentTab === 'gross') {
-                if(currentTab === 'net') {
-                    // MỤC 1: DIỄN GIẢI LƯƠNG NET
-                    let taxable = Math.max(0, v1 - 11000000 - (v2 * 4400000));
-                    const r = taxData.find(v => taxable <= v.limit) || taxData[6];
-                    const tax = taxable * r.rate - r.sub;
-                    resBox.value = format(tax);
-                    diag.innerHTML = `
-                        <div class="step-row"><span class="step-label">Giảm trừ bản thân</span><span class="step-value">= 11.000.000</span></div>
-                        <div class="step-row"><span class="step-label">Giảm trừ người phụ thuộc</span><span class="step-value">= 4.400.000 x ${v2} = ${format(v2*4400000)}</span></div>
-                        <div class="step-row"><span class="step-label">Tổng thu nhập tính thuế</span><span class="step-value">= ${format(v1)} - 11.000.000 - ${format(v2*4400000)} = ${format(taxable)}</span></div>
-                        <div class="step-row font-bold text-gray-800"><span class="step-label">Số thuế thu nhập cá nhân cần nộp</span><span class="step-value">= ${format(taxable)} x ${r.rate*100}% - ${format(r.sub)} = ${format(tax)}</span></div>
-                        <div class="mt-6 text-gray-500 italic leading-relaxed">(Mức thuế TNCN áp dụng đối với mức thu nhập ${format(taxable)}đ/tháng là ${r.rate*100}% - ${format(r.sub)}) (Xem bảng bên dưới)</div>
-                    `;
-                } else {
-                    // MỤC 2: DIỄN GIẢI LƯƠNG GROSS
-                    const bhSalary = parseFloat(document.getElementById('val-bh-salary').value) || 0;
-                    const bhxh = bhSalary * 0.08, bhyt = bhSalary * 0.015, bhtn = bhSalary * 0.01;
-                    const totalBH = bhxh + bhyt + bhtn;
-                    let taxable = Math.max(0, v1 - totalBH - 11000000 - (v2 * 4400000));
-                    const r = taxData.find(v => taxable <= v.limit) || taxData[6];
-                    const tax = taxable * r.rate - r.sub;
-                    resBox.value = format(tax);
-                    diag.innerHTML = `
-                        <div class="step-row"><span class="step-label">Bảo hiểm xã hội (8%) <i class="info-icon">(i)</i></span><span class="step-value">= ${format(bhSalary)} x 8% = ${format(bhxh)}</span></div>
-                        <div class="step-row"><span class="step-label">Bảo hiểm y tế (1.5%) <i class="info-icon">(i)</i></span><span class="step-value">= ${format(bhSalary)} x 1.5% = ${format(bhyt)}</span></div>
-                        <div class="step-row"><span class="step-label">Bảo hiểm thất nghiệp (1%) <i class="info-icon">(i)</i></span><span class="step-value">= ${format(bhSalary)} x 1% = ${format(bhtn)}</span></div>
-                        <div class="step-row"><span class="step-label">Giảm trừ bản thân</span><span class="step-value">= 11.000.000</span></div>
-                        <div class="step-row"><span class="step-label">Giảm trừ người phụ thuộc</span><span class="step-value">= 4.400.000 x ${v2} = ${format(v2*4400000)}</span></div>
-                        <div class="step-row"><span class="step-label">Tổng thu nhập tính thuế</span><span class="step-value">= ${format(v1)} - (${format(bhxh)} + ${format(bhyt)} + ${format(bhtn)} + 11.000.000 + ${format(v2*4400000)}) = ${format(taxable)}</span></div>
-                        <div class="step-row font-bold text-gray-800"><span class="step-label">Số thuế thu nhập cá nhân cần nộp</span><span class="step-value">= ${format(taxable)} x ${r.rate*100}% - ${format(r.sub)} = ${format(tax)}</span></div>
-                        <div class="mt-6 text-gray-500 italic leading-relaxed">(Mức thuế TNCN áp dụng đối với mức thu nhập ${format(taxable)}đ/tháng là ${r.rate*100}% - ${format(r.sub)}) (Xem bảng bên dưới)</div>
-                    `;
-                }
+            if (mode === 'net') {
+                // DIỄN GIẢI MỤC 1 (NET)
+                let tntt = Math.max(0, v1 - 11000000 - (v2 * 4400000));
+                let r = taxData.find(x => tntt <= x.limit) || taxData[6];
+                let tax = tntt * r.rate - r.sub;
+                document.getElementById('res-total').value = f(tax);
+                diag.innerHTML = `
+                    <div class="step-row"><span class="step-label">Giảm trừ bản thân:</span><span class="step-value">= 11.000.000</span></div>
+                    <div class="step-row"><span class="step-label">Giảm trừ người phụ thuộc:</span><span class="step-value">= 4.400.000 x ${v2} = ${f(v2*4400000)}</span></div>
+                    <div class="step-row"><span class="step-label">Tổng thu nhập tính thuế:</span><span class="step-value">= ${f(v1)} - 11.000.000 - ${f(v2*4400000)} = ${f(tntt)}</span></div>
+                    <div class="step-row font-bold text-orange-600"><span class="step-label">Số thuế TNCN cần nộp:</span><span class="step-value">= ${f(tntt)} x ${r.rate*100}% - ${f(r.sub)} = ${f(tax)}</span></div>
+                    <p class="text-xs text-gray-400 italic mt-4">(Áp dụng mức thuế ${r.rate*100}% - ${f(r.sub)} cho TNTT ${f(tntt)}đ)</p>`;
+            } else if (mode === 'gross') {
+                // DIỄN GIẢI MỤC 2 (GROSS)
+                const bhS = parseFloat(document.getElementById('in-bh').value) || 0;
+                const bhxh = bhS * 0.08, bhyt = bhS * 0.015, bhtn = bhS * 0.01, sumBH = bhxh+bhyt+bhtn;
+                let tntt = Math.max(0, v1 - sumBH - 11000000 - (v2 * 4400000));
+                let r = taxData.find(x => tntt <= x.limit) || taxData[6];
+                let tax = tntt * r.rate - r.sub;
+                document.getElementById('res-total').value = f(tax);
+                diag.innerHTML = `
+                    <div class="step-row"><span class="step-label">Bảo hiểm xã hội (8%):</span><span class="step-value">= ${f(bhxh)}</span></div>
+                    <div class="step-row"><span class="step-label">Bảo hiểm y tế (1.5%):</span><span class="step-value">= ${f(bhyt)}</span></div>
+                    <div class="step-row"><span class="step-label">Bảo hiểm thất nghiệp (1%):</span><span class="step-value">= ${f(bhtn)}</span></div>
+                    <div class="step-row"><span class="step-label">Giảm trừ bản thân:</span><span class="step-value">= 11.000.000</span></div>
+                    <div class="step-row"><span class="step-label">Giảm trừ người phụ thuộc:</span><span class="step-value">= ${f(v2*4400000)}</span></div>
+                    <div class="step-row font-bold border-t pt-2"><span class="step-label">Tổng thu nhập tính thuế:</span><span class="step-value">= ${f(tntt)}</span></div>
+                    <div class="step-row font-bold text-orange-600"><span class="step-label">Số thuế TNCN cần nộp:</span><span class="step-value">= ${f(tntt)} x ${r.rate*100}% - ${f(r.sub)} = ${f(tax)}</span></div>`;
             } else {
-                // MỤC 3: DIỄN GIẢI QUYẾT TOÁN
-                const bhTotal = parseFloat(document.getElementById('val-bh-total').value) || 0;
-                const months = parseInt(document.getElementById('val-months').value) || 0;
-                const paid = parseFloat(document.getElementById('val-paid').value) || 0;
-                
-                const selfCut = 132000000;
+                // DIỄN GIẢI MỤC 3 (HOÀN THUẾ)
+                const bhSum = parseFloat(document.getElementById('in-bh-sum').value) || 0;
+                const months = parseInt(document.getElementById('in-months').value) || 0;
+                const paid = parseFloat(document.getElementById('in-paid').value) || 0;
                 const depCut = 4400000 * v2 * months;
-                const taxableYear = Math.max(0, v1 - bhTotal - selfCut - depCut);
-                const taxableMonth = taxableYear / 12;
-                const r = taxData.find(v => taxableMonth <= v.limit) || taxData[6];
-                const taxMonth = taxableMonth * r.rate - r.sub;
+                const tnttYear = Math.max(0, v1 - bhSum - 132000000 - depCut);
+                const tnttMonth = tnttYear / 12;
+                let r = taxData.find(x => tnttMonth <= x.limit) || taxData[6];
+                const taxMonth = tnttMonth * r.rate - r.sub;
                 const taxYear = taxMonth * 12;
                 const refund = paid - taxYear;
 
-                resBox.value = format(refund);
-                notice.classList.remove('hidden');
-                notice.innerHTML = `Như vậy, dựa trên dữ liệu đã nhập trên bảng tính, số tiền thuế thu nhập cá nhân bạn đã khấu trừ (đã nộp) ${refund >= 0 ? 'thừa' : 'chưa đủ'} để được hoàn thuế. Số tiền bạn ${refund >= 0 ? 'được hoàn' : 'cần nộp thêm'} là: <b>${format(Math.abs(refund))}đ</b>.`;
-
+                document.getElementById('res-total').value = f(refund);
+                alert.classList.remove('hidden');
+                alert.innerHTML = `Số tiền bạn ${refund >= 0 ? 'được hoàn' : 'cần nộp thêm'} là: <b>${f(Math.abs(refund))}đ</b>.`;
                 diag.innerHTML = `
-                    <div class="step-row"><span class="step-label">Giảm trừ bản thân</span><span class="step-value">= 12 x 11.000.000 = 132.000.000</span></div>
-                    <div class="step-row"><span class="step-label">Giảm trừ người phụ thuộc</span><span class="step-value">= 4.400.000 x ${v2} x ${months} = ${format(depCut)}</span></div>
-                    <div class="step-row"><span class="step-label">Tổng thu nhập tính thuế theo năm</span><span class="step-value">= ${format(v1)} - ${format(bhTotal)} - 132.000.000 - ${format(depCut)} = ${format(taxableYear)}</span></div>
-                    <div class="step-row"><span class="step-label">Thu nhập tính thuế theo tháng</span><span class="step-value">= ${format(taxableYear)} / 12 = ${format(taxableMonth)}</span></div>
-                    <div class="step-row"><span class="step-label">Số thuế TNCN phải nộp theo tháng</span><span class="step-value">= ${format(taxableMonth)} x ${r.rate*100}% - ${format(r.sub)} = ${format(taxMonth)}</span></div>
-                    <div class="step-row"><span class="step-label">Số thuế TNCN phải nộp theo năm</span><span class="step-value">= ${format(taxMonth)} x 12 = ${format(taxYear)}</span></div>
-                    <div class="step-row font-bold text-blue-600 border-t pt-4"><span class="step-label">Số tiền thuế TNCN được hoàn</span><span class="step-value">= ${format(paid)} - ${format(taxYear)} = ${format(refund)}</span></div>
-                    <div class="mt-8 text-gray-500 italic leading-relaxed">(Mức thuế TNCN áp dụng đối với mức thu nhập ${format(taxableMonth)}đ/tháng là ${r.rate*100}% - ${format(r.sub)}) (Xem bảng bên dưới)</div>
-                `;
+                    <div class="step-row"><span class="step-label">Giảm trừ bản thân:</span><span class="step-value">= 132.000.000</span></div>
+                    <div class="step-row"><span class="step-label">Giảm trừ gia cảnh (${v2} người x ${months} tháng):</span><span class="step-value">= ${f(depCut)}</span></div>
+                    <div class="step-row"><span class="step-label">TNTT cả năm:</span><span class="step-value">= ${f(tnttYear)}</span></div>
+                    <div class="step-row"><span class="step-label">TNTT trung bình tháng:</span><span class="step-value">= ${f(tnttMonth)}</span></div>
+                    <div class="step-row"><span class="step-label">Thuế TNCN theo tháng:</span><span class="step-value">= ${f(taxMonth)}</span></div>
+                    <div class="step-row font-bold text-blue-600 border-t pt-2"><span class="step-label">SỐ TIỀN ĐƯỢC HOÀN:</span><span class="step-value">= ${f(paid)} - ${f(taxYear)} = ${f(refund)}</span></div>`;
             }
         }
 
         window.onload = () => {
             let html = "";
-            taxData.forEach(r => {
-                html += `<tr><td class="p-3 border">${r.b}</td><td class="p-3 border text-left pl-10">${r.text}</td><td class="p-3 border">${r.rate*100}%</td><td class="p-3 border font-bold text-gray-700">${r.quick}</td></tr>`;
-            });
-            document.getElementById('tax-table-body').innerHTML = html;
-            showTab('net');
+            taxData.forEach(r => html += `<tr><td class="p-2 border">${r.b}</td><td class="p-2 border text-left pl-4">${r.text}</td><td class="p-2 border">${r.rate*100}%</td><td class="p-2 border font-bold">${r.quick}</td></tr>`);
+            document.getElementById('tax-table').innerHTML = html;
+            switchTab('net');
         };
     </script>
 </body>
