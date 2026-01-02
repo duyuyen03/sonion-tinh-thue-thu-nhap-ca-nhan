@@ -2,30 +2,39 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Tính thuế TNCN Chi Tiết</title>
+    <title>Công cụ tính thuế TNCN chuẩn</title>
     <style>
         :root {
             --primary-orange: #FF6000;
             --white: #FFFFFF;
             --gray-text: #808080;
+            --light-blue: #f4f7ff;
         }
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
-        .card { background: var(--white); max-width: 800px; margin: auto; padding: 40px; border-radius: 8px; }
-        h2 { color: #5c7cfa; text-align: center; margin-bottom: 30px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--light-blue); padding: 20px; }
+        .card { background: var(--white); max-width: 850px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h2 { color: #5c7cfa; text-align: center; margin-bottom: 30px; font-weight: 600; }
         
-        .input-row { display: flex; align-items: center; margin-bottom: 15px; }
-        .input-row label { flex: 1; font-size: 14px; }
-        .input-row input, .input-row select { flex: 1.5; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .input-row { display: flex; align-items: center; margin-bottom: 18px; }
+        .input-row label { flex: 1; font-size: 14px; color: #333; }
+        .input-row input, .input-row select { flex: 1.5; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         
-        .explanation-box { border: 1px solid #eee; border-radius: 12px; padding: 25px; margin-top: 30px; line-height: 2; }
-        .calc-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
-        .label { width: 280px; }
-        .formula { flex: 1; color: #555; }
+        /* Ô hiển thị kết quả nhanh */
+        .result-highlight { background-color: #f8f9ff; }
+        .result-highlight input { color: #5c7cfa; font-weight: bold; background: #eef2ff; border-color: #d1d9ff; }
+
+        /* Bảng diễn giải chi tiết */
+        .explanation-section { margin-top: 40px; border-top: 1px dashed #ddd; padding-top: 30px; }
+        .explanation-section h3 { font-size: 16px; margin-bottom: 20px; color: #333; }
+        .detail-box { border: 1px solid #f0f0f0; border-radius: 10px; padding: 30px; line-height: 2.2; font-size: 15px; }
         
-        .orange { color: var(--primary-orange); font-style: italic; }
-        .footer-note { color: var(--gray-text); font-size: 13px; margin-top: 20px; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
-        .bold { font-weight: bold; }
+        .calc-line { display: flex; margin-bottom: 10px; }
+        .label-col { width: 300px; color: #444; }
+        .formula-col { flex: 1; color: #555; }
+        
+        .orange { color: var(--primary-orange); font-weight: bold; }
+        .note { color: var(--gray-text); font-size: 13px; margin-top: 15px; font-style: italic; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        .bold { font-weight: bold; color: #000; }
     </style>
 </head>
 <body>
@@ -35,60 +44,83 @@
 
     <div class="input-row">
         <label>Tổng thu nhập (GROSS) <span class="orange">*</span></label>
-        <input type="number" id="gross" value="30000000" oninput="update()">
-    </div>
-    <div class="input-row">
-        <label>Mức lương đóng bảo hiểm <span class="orange">*</span></label>
-        <input type="number" id="ins_salary" value="10000000" oninput="update()">
-    </div>
-    <div class="input-row">
-        <label>Số lượng người phụ thuộc <span class="orange">*</span></label>
-        <input type="number" id="dependents" value="1" oninput="update()">
+        <input type="number" id="gross" value="30000000" oninput="calculate()">
     </div>
 
-    <div class="explanation-box">
-        <div class="calc-line">
-            <span class="label">Bảo hiểm xã hội (8%) <span class="orange">(i)</span></span>
-            <span class="formula" id="ex_bhxh"></span>
+    <div class="input-row">
+        <label>Mức lương đóng bảo hiểm <span class="orange">*</span></label>
+        <input type="number" id="ins_salary" value="10000000" oninput="calculate()">
+    </div>
+
+    <div class="input-row">
+        <label>Vùng <span class="orange">*</span></label>
+        <select id="region" onchange="calculate()">
+            <option value="1">Vùng 1</option>
+            <option value="2">Vùng 2</option>
+            <option value="3">Vùng 3</option>
+            <option value="4">Vùng 4</option>
+        </select>
+    </div>
+
+    <div class="input-row">
+        <label>Số lượng người phụ thuộc <span class="orange">*</span></label>
+        <input type="number" id="dependents" value="1" oninput="calculate()">
+    </div>
+
+    <div class="input-row result-highlight">
+        <label>Số thuế TNCN cần nộp</label>
+        <input type="text" id="quick_result" readonly>
+    </div>
+
+    <div class="explanation-section">
+        <h3>Diễn giải cách tính chi tiết tại bảng dưới đây:</h3>
+        
+        <div class="detail-box">
+            <div class="calc-line">
+                <span class="label-col">Bảo hiểm xã hội (8%) <span class="orange">(i)</span></span>
+                <span class="formula-col" id="ex_bhxh"></span>
+            </div>
+            <div class="calc-line">
+                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="orange">(i)</span></span>
+                <span class="formula-col" id="ex_bhyt"></span>
+            </div>
+            <div class="calc-line">
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="orange">(i)</span></span>
+                <span class="formula-col" id="ex_bhtn"></span>
+            </div>
+            <div class="calc-line">
+                <span class="label-col">Giảm trừ bản thân</span>
+                <span class="formula-col">= 11.000.000</span>
+            </div>
+            <div class="calc-line">
+                <span class="label-col">Giảm trừ người phụ thuộc</span>
+                <span class="formula-col" id="ex_gtpt"></span>
+            </div>
+            <div class="calc-line bold">
+                <span class="label-col">Tổng thu nhập tính thuế</span>
+                <span class="formula-col" id="ex_taxable"></span>
+            </div>
+            <hr>
+            <div class="calc-line bold">
+                <span class="label-col">Số thuế TNCN cần nộp</span>
+                <span class="formula-col" id="ex_final_tax"></span>
+            </div>
+
+            <p class="note" id="tax_note"></p>
         </div>
-        <div class="calc-line">
-            <span class="label">Bảo hiểm y tế (1.5%) <span class="orange">(i)</span></span>
-            <span class="formula" id="ex_bhyt"></span>
-        </div>
-        <div class="calc-line">
-            <span class="label">Bảo hiểm thất nghiệp (1%) <span class="orange">(i)</span></span>
-            <span class="formula" id="ex_bhtn"></span>
-        </div>
-        <div class="calc-line">
-            <span class="label">Giảm trừ bản thân</span>
-            <span class="formula">= 11.000.000</span>
-        </div>
-        <div class="calc-line">
-            <span class="label">Giảm trừ người phụ thuộc</span>
-            <span class="formula" id="ex_gtpt"></span>
-        </div>
-        <div class="calc-line bold">
-            <span class="label">Tổng thu nhập tính thuế</span>
-            <span class="formula" id="ex_taxable"></span>
-        </div>
-        <hr>
-        <div class="calc-line bold">
-            <span class="label">Số thuế TNCN cần nộp</span>
-            <span class="formula" id="ex_final_tax"></span>
-        </div>
-        <p class="footer-note" id="tax_bracket_info"></p>
+        <p class="note">* Ô đánh dấu màu cam bắt buộc điền dữ liệu</p>
     </div>
 </div>
 
 <script>
     const f = (n) => Math.round(n).toLocaleString('vi-VN');
 
-    function update() {
+    function calculate() {
         const gross = parseFloat(document.getElementById('gross').value) || 0;
         const ins = parseFloat(document.getElementById('ins_salary').value) || 0;
         const dep = parseInt(document.getElementById('dependents').value) || 0;
 
-        // 1. Tính bảo hiểm
+        // 1. Bảo hiểm (Tạm tính theo lương cơ sở 2.34tr)
         const bhxh = ins * 0.08;
         const bhyt = ins * 0.015;
         const bhtn = ins * 0.01;
@@ -112,7 +144,10 @@
         else if (taxable <= 80000000) { tax = taxable * 0.3 - 5850000; rate = "30%"; sub = 5850000; }
         else { tax = taxable * 0.35 - 9850000; rate = "35%"; sub = 9850000; }
 
-        // Hiển thị diễn giải biểu thức
+        // Cập nhật giao diện
+        document.getElementById('quick_result').value = f(tax);
+        
+        // Diễn giải chi tiết (nhân/chia/trừ) theo hình
         document.getElementById('ex_bhxh').innerText = `= ${f(ins)} x 8% = ${f(bhxh)}`;
         document.getElementById('ex_bhyt').innerText = `= ${f(ins)} x 1,5% = ${f(bhyt)}`;
         document.getElementById('ex_bhtn').innerText = `= ${f(ins)} x 1% = ${f(bhtn)}`;
@@ -124,10 +159,12 @@
         document.getElementById('ex_final_tax').innerText = 
             `= ${f(taxable)} x ${rate} - ${f(sub)} = ${f(Math.max(0, tax))}`;
 
-        document.getElementById('tax_bracket_info').innerText = 
+        document.getElementById('tax_note').innerText = 
             `(Mức thuế TNCN áp dụng đối với mức thu nhập ${f(taxable)}đ/tháng là ${rate} - ${f(sub)}) (Xem bảng bên dưới)`;
     }
-    update();
+
+    calculate();
 </script>
+
 </body>
 </html>
