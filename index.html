@@ -195,7 +195,7 @@
         else if (taxable <= 32000000) { tax = taxable * 0.2 - 1650000; rate = "20%"; sub = 1650000; }
         else if (taxable <= 52000000) { tax = taxable * 0.25 - 3250000; rate = "25%"; sub = 3250000; }
         else if (taxable <= 80000000) { tax = taxable * 0.3 - 5850000; rate = "30%"; sub = 5850000; }
-        else { tax = taxable * 0.35 - 9850000; rate = "35%"; sub = 9.850.000; }
+        else { tax = taxable * 0.35 - 9.850.000; rate = "35%"; sub = 9.850.000; }
 
         document.getElementById('tax_display').innerText = f(tax);
         
