@@ -60,7 +60,7 @@
 <body>
 
 <div class="container">
-    <h2>Cách 2: Tính thuế TNCN dựa trên mức lương GROSS</h2>
+    <h2>Tính thuế TNCN dựa trên mức lương GROSS (theo tháng)</h2>
 
     <div class="input-group">
         <label>Tổng thu nhập (GROSS) <span class="star">*</span> 
@@ -131,13 +131,13 @@
                 <tr><th>Bậc</th><th>Thu nhập tính thuế/Tháng</th><th>Thuế suất</th><th>Số thuế tính nhanh</th></tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td>Đến 5 triệu đồng</td><td>5%</td><td>0 + 5% TNTT</td></tr>
-                <tr><td>2</td><td>Trên 5 trđ đến 10 trđ</td><td>10%</td><td>0,25 trđ + 10% TNTT trên 5 trđ</td></tr>
-                <tr><td>3</td><td>Trên 10 trđ đến 18 trđ</td><td>15%</td><td>0,75 trđ + 15% TNTT trên 10 trđ</td></tr>
-                <tr><td>4</td><td>Trên 18 trđ đến 32 trđ</td><td>20%</td><td>1,95 trđ + 20% TNTT trên 18 trđ</td></tr>
-                <tr><td>5</td><td>Trên 32 trđ đến 52 trđ</td><td>25%</td><td>4,75 trđ + 25% TNTT trên 32 trđ</td></tr>
-                <tr><td>6</td><td>Trên 52 trđ đến 80 trđ</td><td>30%</td><td>9,75 trđ + 30% TNTT trên 52 trđ</td></tr>
-                <tr><td>7</td><td>Trên 80 trđ</td><td>35%</td><td>18,15 trđ + 35% TNTT trên 80 trđ</td></tr>
+                <tr><td>1</td><td>Đến 5 triệu đồng</td><td>5%</td><td>5% TNTT</td></tr>
+                <tr><td>2</td><td>Trên 5 trđ đến 10 trđ</td><td>10%</td><td>10% TNTT - 0,25 trđ</td></tr>
+                <tr><td>3</td><td>Trên 10 trđ đến 18 trđ</td><td>15%</td><td>15% TNTT - 0,75 trđ</td></tr>
+                <tr><td>4</td><td>Trên 18 trđ đến 32 trđ</td><td>20%</td><td>20% TNTT - 1,65 trđ</td></tr>
+                <tr><td>5</td><td>Trên 32 trđ đến 52 trđ</td><td>25%</td><td>25% TNTT - 3,25 trđ</td></tr>
+                <tr><td>6</td><td>Trên 52 trđ đến 80 trđ</td><td>30%</td><td>30% TNTT - 5,85 trđ</td></tr>
+                <tr><td>7</td><td>Trên 80 trđ</td><td>35%</td><td>35% TNTT - 9,85 trđ</td></tr>
             </tbody>
         </table>
     </div>
@@ -192,10 +192,10 @@
         if (taxable <= 5000000) { tax = taxable * 0.05; rate = "5%"; sub = 0; }
         else if (taxable <= 10000000) { tax = taxable * 0.1 - 250000; rate = "10%"; sub = 250000; }
         else if (taxable <= 18000000) { tax = taxable * 0.15 - 750000; rate = "15%"; sub = 750000; }
-        else if (taxable <= 32000000) { tax = taxable * 0.2 - 1950000; rate = "20%"; sub = 1950000; }
-        else if (taxable <= 52000000) { tax = taxable * 0.25 - 4750000; rate = "25%"; sub = 4750000; }
-        else if (taxable <= 80000000) { tax = taxable * 0.3 - 9750000; rate = "30%"; sub = 9750000; }
-        else { tax = taxable * 0.35 - 18150000; rate = "35%"; sub = 18150000; }
+        else if (taxable <= 32000000) { tax = taxable * 0.2 - 1650000; rate = "20%"; sub = 1650000; }
+        else if (taxable <= 52000000) { tax = taxable * 0.25 - 3250000; rate = "25%"; sub = 3250000; }
+        else if (taxable <= 80000000) { tax = taxable * 0.3 - 5850000; rate = "30%"; sub = 5850000; }
+        else { tax = taxable * 0.35 - 9850000; rate = "35%"; sub = 9850000; }
 
         document.getElementById('tax_display').innerText = f(tax);
         
