@@ -210,7 +210,7 @@
         document.getElementById('ex_gtpt').innerText = `= 4.400.000 x ${dep} = ${f(gtpt)}`;
         document.getElementById('ex_taxable').innerText = `= ${f(gross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 11.000.000 + ${f(gtpt)}) = ${f(taxable)}`;
         document.getElementById('ex_final_tax').innerText = `= ${f(taxable)} x ${rate} - ${f(sub)} = ${f(tax)}`;
-        document.getElementById('bracket_desc').innerText = `(Mức thuế TNCN áp dụng đối với thu nhập ${f(taxable)}đ/tháng là ${rate} - ${f(sub)})`;
+        document.getElementById('bracket_desc').innerText = `(Mức thuế TNCN áp dụng đối với thu nhập ${f(taxable)}đ/tháng là ${rate} - ${f(sub)})(Xem bảng bên dưới)`;
     }
     calculate();
 </script>
