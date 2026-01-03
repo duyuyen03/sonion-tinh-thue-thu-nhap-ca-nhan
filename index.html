@@ -11,7 +11,18 @@
             --gray-bg: #f8f9fa;
         }
 
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
+        
+        /* Thêm dòng author ở góc phải */
+        .author-tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 13px;
+            color: #888;
+            font-style: italic;
+        }
+
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         
         h2 { color: var(--primary-orange); text-align: center; margin-bottom: 30px; font-weight: 700; }
@@ -54,6 +65,8 @@
     </style>
 </head>
 <body>
+
+<div class="author-tag">Author: vyho</div>
 
 <div class="container">
     <h2>Công cụ tính thuế TNCN chuẩn 2026</h2>
@@ -143,18 +156,18 @@
         const otSalary = parseFloat(document.getElementById('ot_salary').value) || 0;
         const dep = parseInt(document.getElementById('dependents').value) || 0;
 
-        // Tự động gán lương đóng bảo hiểm
+        // Tự động cập nhật mức lương đóng bảo hiểm bằng lương hợp đồng
         document.getElementById('ins_salary').value = contractSalary;
 
         const totalGross = contractSalary + bonus + otSalary;
         
-        // Thông số 2024-2026
+        // Hằng số tính toán 2026
         const L_CO_SO = 2340000; 
         const LTT_VUNG1 = 4960000; 
         const MAX_BHXH = 20 * L_CO_SO; 
         const MAX_BHTN = 20 * LTT_VUNG1; 
 
-        // Tính bảo hiểm dựa trên lương hợp đồng
+        // Tính bảo hiểm trên mức lương hợp đồng
         const act_bhxh = Math.min(contractSalary, MAX_BHXH);
         const act_bhtn = Math.min(contractSalary, MAX_BHTN);
 
@@ -180,7 +193,7 @@
 
         document.getElementById('tax_display').innerText = f(tax);
         
-        // Hiển thị diễn giải bảo hiểm giống hình mẫu
+        // Diễn giải chi tiết giống ảnh mẫu
         const bh_text = contractSalary > MAX_BHXH ? `(20 x ${f(L_CO_SO)})` : f(contractSalary);
         document.getElementById('ex_bhxh').innerText = `= ${bh_text} x 8% = ${f(bhxh)}`;
         document.getElementById('ex_bhyt').innerText = `= ${bh_text} x 1.5% = ${f(bhyt)}`;
@@ -189,13 +202,12 @@
         document.getElementById('ex_bhtn').innerText = `= ${bhtn_text} x 1% = ${f(bhtn)}`;
         
         document.getElementById('ex_gtpt').innerText = `= 4.400.000 x ${dep} = ${f(gtpt)}`;
-        
-        // Diễn giải tổng thu nhập tính thuế
         document.getElementById('ex_taxable').innerText = `= ${f(totalGross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 11.000.000 + ${f(gtpt)}) = ${f(taxable)}`;
         
-        // Diễn giải số thuế và câu chú thích cuối
         const sub_str = sub > 0 ? ` - ${f(sub)}` : "";
         document.getElementById('ex_final_tax').innerText = `= ${f(taxable)} x ${rate}${sub_str} = ${f(tax)}`;
+        
+        // Dòng chú thích mức thuế áp dụng
         document.getElementById('bracket_desc').innerText = `(Mức thuế TNCN áp dụng đối với thu nhập ${f(taxable)}đ/tháng là ${rate}${sub_str})(Xem bảng bên dưới)`;
     }
     
