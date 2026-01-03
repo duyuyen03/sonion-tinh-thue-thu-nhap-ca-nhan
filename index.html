@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Công cụ tính thuế TNCN chuẩn 2026</title>
+    <title>Công cụ tính thuế TNCN 2026</title>
     <style>
         :root {
             --primary-orange: #FF6000;
@@ -13,7 +13,7 @@
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
         
         /* Author ở góc trái */
-        .author-tag { position: absolute; top: 10px; left: 20px; font-size: 13px; color: #999; font-style: italic; }
+        .author-tag { position: absolute; top: 10px; left: 20px; font-size: 26px; color: #666666; font-style: italic; }
 
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         h2 { color: var(--primary-orange); text-align: center; margin-bottom: 30px; font-weight: 700; }
@@ -86,10 +86,10 @@
 <div class="author-tag">Author: vyho</div>
 
 <div class="container">
-    <h2>Công cụ tính thuế TNCN chuẩn 2026</h2>
+    <h2>Công cụ tính thuế TNCN dựa trên mức lương GROSS (theo tháng)</h2>
 
     <div class="input-group">
-        <label>📄 Lương trên hợp đồng (GROSS) *</label>
+        <label>📄 Lương trên hợp đồng *</label>
         <input type="number" id="contract_salary" placeholder="Nhập số tiền..." oninput="syncAndCalculate()">
     </div>
 
@@ -105,7 +105,7 @@
 
     <div class="input-group">
         <label>🛡️ Mức lương đóng bảo hiểm *</label>
-        <input type="number" id="ins_salary" readonly placeholder="Tự động tính theo Gross...">
+        <input type="number" id="ins_salary" readonly>
     </div>
 
     <div class="input-group">
@@ -198,15 +198,15 @@
 
         expBox.innerHTML = `
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Tối đa 20 lần lương cơ sở (46.800.000đ)">(i)</span></span>
+                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH, BHYT không quá 20 lần mức lương cơ sở (2.340.000 đồng/tháng)">(i)</span></span>
                 <span class="formula-col">= ${bh_formula} x 8% = ${f(bhxh_val)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Tối đa 20 lần lương cơ sở (46.800.000đ)">(i)</span></span>
+                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH, BHYT không quá 20 lần mức lương cơ sở (2.340.000 đồng/tháng)">(i)</span></span>
                 <span class="formula-col">= ${bh_formula} x 1.5% = ${f(bhyt_val)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Tối đa 20 lần lương tối thiểu vùng">(i)</span></span>
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000 đồng/tháng)">(i)</span></span>
                 <span class="formula-col">= ${bhtn_formula} x 1% = ${f(bhtn_val)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 15.500.000</span></div>
