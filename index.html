@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Công cụ tính thuế TNCN 2025</title>
+    <title>Công cụ tính thuế TNCN chuẩn 2026 (Cập nhật mới)</title>
     <style>
         :root {
             --primary-orange: #FF6000;
@@ -16,9 +16,9 @@
         .author-tag {
             position: absolute;
             top: 20px;
-            left: 20px;
-            font-size: 26px;
-            color: #525252;
+            right: 20px;
+            font-size: 13px;
+            color: #888;
             font-style: italic;
         }
 
@@ -79,7 +79,7 @@
 <div class="author-tag">Author: vyho</div>
 
 <div class="container">
-    <h2>Công cụ tính thuế TNCN dựa trên mức lương GROSS (theo tháng)</h2>
+    <h2>Công cụ tính thuế TNCN (Dự thảo 5 bậc 2026)</h2>
 
     <div class="input-group">
         <label>📄 Lương trên hợp đồng <span class="star">*</span></label>
@@ -98,7 +98,7 @@
 
     <div class="input-group">
         <label>🛡️ Mức lương đóng bảo hiểm</label>
-        <input type="text" id="ins_salary" readonly>
+        <input type="text" id="ins_salary" readonly placeholder="Tự động tính...">
     </div>
 
     <div class="input-group">
@@ -114,24 +114,22 @@
     <div class="explanation-section">
         <p class="bold" style="color: var(--primary-orange);">📝 Diễn giải cách tính thuế thu nhập cá nhân chi tiết:</p>
         <div class="detail-box" id="explanation_box">
-            <p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết.</p>
+             <p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết.</p>
         </div>
     </div>
 
     <div class="tax-table-container">
-        <div class="table-title">Biểu tính thuế rút gọn (Công thức tính nhanh)</div>
+        <div class="table-title">Biểu thuế lũy tiến 5 bậc (Dự thảo 2026)</div>
         <table class="tax-table">
             <thead>
                 <tr><th>Bậc</th><th>Thu nhập tính thuế/Tháng</th><th>Thuế suất</th><th>Số thuế tính nhanh</th></tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td>Đến 5 triệu đồng</td><td>5%</td><td>5% TNTT</td></tr>
-                <tr><td>2</td><td>Trên 5 trđ đến 10 trđ</td><td>10%</td><td>10% TNTT - 0,25 trđ</td></tr>
-                <tr><td>3</td><td>Trên 10 trđ đến 18 trđ</td><td>15%</td><td>15% TNTT - 0,75 trđ</td></tr>
-                <tr><td>4</td><td>Trên 18 trđ đến 32 trđ</td><td>20%</td><td>20% TNTT - 1,65 trđ</td></tr>
-                <tr><td>5</td><td>Trên 32 trđ đến 52 trđ</td><td>25%</td><td>25% TNTT - 3,25 trđ</td></tr>
-                <tr><td>6</td><td>Trên 52 trđ đến 80 trđ</td><td>30%</td><td>30% TNTT - 5,85 trđ</td></tr>
-                <tr><td>7</td><td>Trên 80 trđ</td><td>35%</td><td>35% TNTT - 9,85 trđ</td></tr>
+                <tr><td>1</td><td>Đến 10 triệu đồng</td><td>5%</td><td>5% TNTT</td></tr>
+                <tr><td>2</td><td>Từ 10 trđ đến 30 trđ</td><td>10%</td><td>10% TNTT - 0,5 trđ</td></tr>
+                <tr><td>3</td><td>Từ 30 trđ đến 60 trđ</td><td>20%</td><td>20% TNTT - 3,5 trđ</td></tr>
+                <tr><td>4</td><td>Từ 60 trđ đến 100 trđ</td><td>30%</td><td>30% TNTT - 9,5 trđ</td></tr>
+                <tr><td>5</td><td>Trên 100 trđ</td><td>35%</td><td>35% TNTT - 14,5 trđ</td></tr>
             </tbody>
         </table>
     </div>
@@ -160,10 +158,11 @@
 
         const totalGross = contractSalary + bonus + otSalary;
         
-        const L_CO_SO = 2340000;
-        const LTT_VUNG1 = 4960000;
-        const MAX_BHXH = 20 * L_CO_SO;
-        const MAX_BHTN = 20 * LTT_VUNG1;
+        // THÔNG SỐ MỚI YÊU CẦU
+        const L_CO_SO = 2340000; 
+        const LTT_VUNG1 = 5310000; // Thay đổi từ 4.96tr -> 5.31tr
+        const MAX_BHXH = 20 * L_CO_SO; 
+        const MAX_BHTN = 20 * LTT_VUNG1; 
 
         const act_bhxh = Math.min(contractSalary, MAX_BHXH);
         const act_bhtn = Math.min(contractSalary, MAX_BHTN);
@@ -173,51 +172,31 @@
         const bhtn = act_bhtn * 0.01;
         const total_ins = bhxh + bhyt + bhtn;
 
-        const gtbt = 11000000;
-        const gtpt = dep * 4400000;
+        const gtbt = 15500000; // Thay đổi từ 11tr -> 15.5tr
+        const gtpt = dep * 6200000; // Thay đổi từ 4.4tr -> 6.2tr
 
         let taxable = totalGross - total_ins - gtbt - gtpt;
         if (taxable < 0) taxable = 0;
 
+        // BIỂU THUẾ 5 BẬC MỚI [Cite: 7]
         let tax = 0; let rate = ""; let sub = 0;
-        if (taxable <= 5000000) { tax = taxable * 0.05; rate = "5%"; sub = 0; }
-        else if (taxable <= 10000000) { tax = taxable * 0.1 - 250000; rate = "10%"; sub = 250000; }
-        else if (taxable <= 18000000) { tax = taxable * 0.15 - 750000; rate = "15%"; sub = 750000; }
-        else if (taxable <= 32000000) { tax = taxable * 0.2 - 1650000; rate = "20%"; sub = 1650000; }
-        else if (taxable <= 52000000) { tax = taxable * 0.25 - 3250000; rate = "25%"; sub = 3250000; }
-        else if (taxable <= 80000000) { tax = taxable * 0.3 - 5850000; rate = "30%"; sub = 5850000; }
-        else { tax = taxable * 0.35 - 9850000; rate = "35%"; sub = 9850000; }
+        if (taxable <= 10000000) { 
+            tax = taxable * 0.05; rate = "5%"; sub = 0; 
+        }
+        else if (taxable <= 30000000) { 
+            tax = taxable * 0.1 - 500000; rate = "10%"; sub = 500000; 
+        }
+        else if (taxable <= 60000000) { 
+            tax = taxable * 0.2 - 3500000; rate = "20%"; sub = 3500000; 
+        }
+        else if (taxable <= 100000000) { 
+            tax = taxable * 0.3 - 9500000; rate = "30%"; sub = 9500000; 
+        }
+        else { 
+            tax = taxable * 0.35 - 14500000; rate = "35%"; sub = 14500000; 
+        }
 
         document.getElementById('tax_display').innerText = f(tax);
         
         const bh_text = contractSalary > MAX_BHXH ? `(20 x ${f(L_CO_SO)})` : f(contractSalary);
-        const bhtn_text = contractSalary > MAX_BHTN ? `(20 x ${f(LTT_VUNG1)})` : f(contractSalary);
-        const sub_str = sub > 0 ? ` - ${f(sub)}` : "";
-
-        expBox.innerHTML = `
-            <div class="calc-row">
-                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-note="Mức lương đóng BHXH tối đa không quá 20 lần mức lương cơ sở (2,34 triệu đồng/tháng).">(i)</span></span>
-                <span class="formula-col">= ${bh_text} x 8% = ${f(bhxh)}</span>
-            </div>
-            <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-note="Mức lương đóng BHYT tối đa không quá 20 lần mức lương cơ sở (2,34 triệu đồng/tháng).">(i)</span></span>
-                <span class="formula-col">= ${bh_text} x 1.5% = ${f(bhyt)}</span>
-            </div>
-            <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-note="Mức lương đóng BHTN tối đa không quá 20 lần mức lương tối thiểu vùng (vùng I: 4,96 triệu đồng/tháng).">(i)</span></span>
-                <span class="formula-col">= ${bhtn_text} x 1% = ${f(bhtn)}</span>
-            </div>
-            <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 11.000.000</span></div>
-            <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc</span><span class="formula-col">= 4.400.000 x ${dep} = ${f(gtpt)}</span></div>
-            <hr>
-            <div class="calc-row bold"><span class="label-col">Tổng thu nhập tính thuế</span><span class="formula-col">= ${f(totalGross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 11.000.000 + ${f(gtpt)}) = ${f(taxable)}</span></div>
-            <div class="calc-row bold final-tax-row">
-                <span class="label-col">Số thuế thu nhập cá nhân cần nộp</span>
-                <span class="formula-col">= ${f(taxable)} x ${rate}${sub_str} = ${f(tax)}</span>
-            </div>
-            <p class="note-text">(Mức thuế TNCN áp dụng đối với thu nhập ${f(taxable)}đ/tháng là ${rate}${sub_str})(Xem bảng bên dưới)</p>
-        `;
-    }
-</script>
-</body>
-</html>
+        const bhtn_text = contractSalary > MAX_BHTN ? `(20 x ${f(LTT
