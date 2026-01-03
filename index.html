@@ -2,133 +2,93 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Công cụ tính thuế TNCN chuẩn 2026 (Cập nhật mới)</title>
+    <title>Công cụ tính thuế TNCN Dự thảo 2026</title>
     <style>
         :root {
             --primary-orange: #FF6000;
             --light-orange: #fff4ed;
             --text-dark: #333;
-            --gray-bg: #f8f9fa;
         }
 
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
-        
-        .author-tag {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 13px;
-            color: #888;
-            font-style: italic;
-        }
-
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); }
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        
-        h2 { color: var(--primary-orange); text-align: center; margin-bottom: 30px; font-weight: 700; }
+        h2 { color: var(--primary-orange); text-align: center; margin-bottom: 30px; }
 
-        .input-group { display: flex; align-items: center; margin-bottom: 15px; position: relative; }
-        .input-group label { flex: 1; font-size: 14px; font-weight: 600; display: flex; align-items: center; }
+        .input-group { display: flex; align-items: center; margin-bottom: 15px; }
+        .input-group label { flex: 1; font-size: 14px; font-weight: 600; }
         .input-group input { flex: 1.5; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .input-group input:focus { border-color: var(--primary-orange); }
-        .input-group input[readonly] { background-color: #f8f8f8; cursor: not-allowed; color: #666; }
+        .input-group input[readonly] { background-color: #f8f8f8; color: #666; }
 
-        .info-icon { color: var(--primary-orange); cursor: help; margin-left: 5px; font-style: italic; font-weight: bold; position: relative; }
-        .info-icon:hover::after {
-            content: attr(data-note);
-            position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
-            background: #333; color: #fff; padding: 10px; border-radius: 6px;
-            font-size: 12px; width: 280px; z-index: 100; font-style: normal; font-weight: 400; line-height: 1.5; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
+        /* Ô kết quả nổi bật màu cam */
         .tax-highlight-row { 
             background-color: var(--light-orange); 
             border-radius: 8px; 
-            padding: 15px 20px; 
-            margin-top: 20px; 
+            padding: 20px; 
+            margin: 25px 0; 
             display: flex; 
             align-items: center; 
             border: 2px solid var(--primary-orange);
         }
-        .tax-highlight-row label { flex: 1; font-weight: bold; color: var(--primary-orange); }
-        .tax-highlight-row .result-val { flex: 1.5; text-align: right; color: var(--primary-orange); font-weight: 900; font-size: 28px; }
+        .tax-highlight-row label { flex: 1; font-weight: bold; color: var(--primary-orange); font-size: 18px; }
+        .tax-highlight-row .result-val { flex: 1.5; text-align: right; color: var(--primary-orange); font-weight: 900; font-size: 32px; }
 
-        .explanation-section { margin-top: 40px; }
-        .detail-box { border: 1px solid #eee; border-radius: 10px; padding: 25px; line-height: 2.5; font-size: 14.5px; background: #fff; min-height: 200px; }
-        .calc-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .label-col { width: 350px; color: #555; }
-        .formula-col { flex: 1; text-align: right; color: #333; font-family: 'Segoe UI', Tahoma, sans-serif; }
-
-        .final-tax-row { color: var(--primary-orange) !important; font-weight: 800; }
-        .final-tax-row .label-col, .final-tax-row .formula-col { color: var(--primary-orange) !important; }
-
-        .tax-table-container { border: 1px solid #eee; border-radius: 8px; overflow: hidden; margin-top: 25px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .table-title { padding: 12px 20px; background: #f9f9f9; border-bottom: 1px solid #eee; font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; font-style: italic; }
-        .tax-table { width: 100%; border-collapse: collapse; }
-        .tax-table th, .tax-table td { padding: 12px 20px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-        .tax-table th { background: #fafafa; font-weight: 600; }
-        .tax-table tr:hover { background-color: var(--light-orange); }
-
-        .star { color: red; font-weight: bold; margin: 0 3px; }
-        .note-text { color: #888; font-size: 13px; font-style: italic; margin-top: 15px; }
+        .explanation-section { margin-top: 30px; }
+        .detail-box { border: 1px solid #eee; border-radius: 10px; padding: 25px; line-height: 2; background: #fff; min-height: 100px; }
+        .calc-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .bold { font-weight: bold; }
+        
+        /* Màu cam cho dòng kết quả trong phần diễn giải */
+        .final-tax-row { color: var(--primary-orange) !important; font-size: 16px; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+
+        .tax-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .tax-table th, .tax-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        .tax-table th { background: #fafafa; }
         hr { border: 0; border-top: 1px dashed #ddd; margin: 15px 0; }
     </style>
 </head>
 <body>
 
-<div class="author-tag">Author: vyho</div>
-
 <div class="container">
     <h2>Công cụ tính thuế TNCN (Dự thảo 5 bậc 2026)</h2>
 
     <div class="input-group">
-        <label>📄 Lương trên hợp đồng <span class="star">*</span></label>
+        <label>📄 Lương trên hợp đồng (GROSS)</label>
         <input type="number" id="contract_salary" placeholder="Nhập số tiền..." oninput="calculate()">
     </div>
 
     <div class="input-group">
-        <label>🎁 Tổng tiền thưởng tính thuế</label>
+        <label>🎁 Tổng tiền thưởng/OT tính thuế</label>
         <input type="number" id="bonus" placeholder="0" oninput="calculate()">
     </div>
 
     <div class="input-group">
-        <label>🕒 Tổng tiền OT tính thuế</label>
-        <input type="number" id="ot_salary" placeholder="0" oninput="calculate()">
-    </div>
-
-    <div class="input-group">
-        <label>🛡️ Mức lương đóng bảo hiểm</label>
-        <input type="text" id="ins_salary" readonly placeholder="Tự động tính...">
-    </div>
-
-    <div class="input-group">
-        <label>👥 Số lượng người phụ thuộc <span class="star">*</span></label>
+        <label>👥 Số lượng người phụ thuộc</label>
         <input type="number" id="dependents" placeholder="0" oninput="calculate()">
     </div>
 
     <div class="tax-highlight-row">
-        <label>💸 Số thuế thu nhập cá nhân cần nộp</label>
+        <label>💸 Thuế TNCN cần nộp</label>
         <div class="result-val" id="tax_display">0</div>
     </div>
 
     <div class="explanation-section">
-        <p class="bold" style="color: var(--primary-orange);">📝 Diễn giải cách tính thuế thu nhập cá nhân chi tiết:</p>
+        <p class="bold" style="color: var(--primary-orange);">📝 Chi tiết cách tính:</p>
         <div class="detail-box" id="explanation_box">
-             <p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết.</p>
+             <p style="color: #999; text-align: center;">Hãy nhập mức lương để xem đáp án chi tiết.</p>
         </div>
     </div>
 
-    <div class="tax-table-container">
-        <div class="table-title">Biểu thuế lũy tiến 5 bậc (Dự thảo 2026)</div>
+    <div style="margin-top:30px">
+        <p class="bold">Biểu thuế lũy tiến 5 bậc mới:</p>
         <table class="tax-table">
             <thead>
-                <tr><th>Bậc</th><th>Thu nhập tính thuế/Tháng</th><th>Thuế suất</th><th>Số thuế tính nhanh</th></tr>
+                <tr><th>Bậc</th><th>Thu nhập tính thuế</th><th>Thuế suất</th><th>Tính nhanh</th></tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td>Đến 10 triệu đồng</td><td>5%</td><td>5% TNTT</td></tr>
-                <tr><td>2</td><td>Từ 10 trđ đến 30 trđ</td><td>10%</td><td>10% TNTT - 0,5 trđ</td></tr>
-                <tr><td>3</td><td>Từ 30 trđ đến 60 trđ</td><td>20%</td><td>20% TNTT - 3,5 trđ</td></tr>
-                <tr><td>4</td><td>Từ 60 trđ đến 100 trđ</td><td>30%</td><td>30% TNTT - 9,5 trđ</td></tr>
+                <tr><td>1</td><td>Đến 10 trđ</td><td>5%</td><td>5% TNTT</td></tr>
+                <tr><td>2</td><td>10 - 30 trđ</td><td>10%</td><td>10% TNTT - 0,5 trđ</td></tr>
+                <tr><td>3</td><td>30 - 60 trđ</td><td>20%</td><td>20% TNTT - 3,5 trđ</td></tr>
+                <tr><td>4</td><td>60 - 100 trđ</td><td>30%</td><td>30% TNTT - 9,5 trđ</td></tr>
                 <tr><td>5</td><td>Trên 100 trđ</td><td>35%</td><td>35% TNTT - 14,5 trđ</td></tr>
             </tbody>
         </table>
@@ -139,64 +99,57 @@
     const f = (n) => Math.round(n).toLocaleString('vi-VN');
 
     function calculate() {
-        const contractSalaryInput = document.getElementById('contract_salary').value;
-        const contractSalary = parseFloat(contractSalaryInput) || 0;
+        const gross = parseFloat(document.getElementById('contract_salary').value) || 0;
         const bonus = parseFloat(document.getElementById('bonus').value) || 0;
-        const otSalary = parseFloat(document.getElementById('ot_salary').value) || 0;
         const dep = parseInt(document.getElementById('dependents').value) || 0;
-
         const expBox = document.getElementById('explanation_box');
 
-        if (!contractSalaryInput || contractSalary <= 0) {
+        if (gross === 0) {
             document.getElementById('tax_display').innerText = "0";
-            document.getElementById('ins_salary').value = "";
-            expBox.innerHTML = '<p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết.</p>';
+            expBox.innerHTML = '<p style="color: #999; text-align: center;">Hãy nhập mức lương để xem đáp án chi tiết.</p>';
             return;
         }
 
-        document.getElementById('ins_salary').value = f(contractSalary);
-
-        const totalGross = contractSalary + bonus + otSalary;
-        
-        // THÔNG SỐ MỚI YÊU CẦU
-        const L_CO_SO = 2340000; 
-        const LTT_VUNG1 = 5310000; // Thay đổi từ 4.96tr -> 5.31tr
-        const MAX_BHXH = 20 * L_CO_SO; 
-        const MAX_BHTN = 20 * LTT_VUNG1; 
-
-        const act_bhxh = Math.min(contractSalary, MAX_BHXH);
-        const act_bhtn = Math.min(contractSalary, MAX_BHTN);
-
-        const bhxh = act_bhxh * 0.08;
-        const bhyt = act_bhxh * 0.015;
-        const bhtn = act_bhtn * 0.01;
+        // 1. Bảo hiểm (Lương tối thiểu vùng mới 5.31tr)
+        const LTT_VUNG = 5310000;
+        const L_CO_SO = 2340000;
+        const bhxh = Math.min(gross, 20 * L_CO_SO) * 0.08;
+        const bhyt = Math.min(gross, 20 * L_CO_SO) * 0.015;
+        const bhtn = Math.min(gross, 20 * LTT_VUNG) * 0.01;
         const total_ins = bhxh + bhyt + bhtn;
 
-        const gtbt = 15500000; // Thay đổi từ 11tr -> 15.5tr
-        const gtpt = dep * 6200000; // Thay đổi từ 4.4tr -> 6.2tr
+        // 2. Giảm trừ mới
+        const gt_banthan = 15500000;
+        const gt_phuthuoc = dep * 6200000;
 
-        let taxable = totalGross - total_ins - gtbt - gtpt;
+        // 3. Thu nhập tính thuế
+        let taxable = (gross + bonus) - total_ins - gt_banthan - gt_phuthuoc;
         if (taxable < 0) taxable = 0;
 
-        // BIỂU THUẾ 5 BẬC MỚI [Cite: 7]
+        // 4. Tính thuế 5 bậc
         let tax = 0; let rate = ""; let sub = 0;
-        if (taxable <= 10000000) { 
-            tax = taxable * 0.05; rate = "5%"; sub = 0; 
-        }
-        else if (taxable <= 30000000) { 
-            tax = taxable * 0.1 - 500000; rate = "10%"; sub = 500000; 
-        }
-        else if (taxable <= 60000000) { 
-            tax = taxable * 0.2 - 3500000; rate = "20%"; sub = 3500000; 
-        }
-        else if (taxable <= 100000000) { 
-            tax = taxable * 0.3 - 9500000; rate = "30%"; sub = 9500000; 
-        }
-        else { 
-            tax = taxable * 0.35 - 14500000; rate = "35%"; sub = 14500000; 
-        }
+        if (taxable <= 10000000) { tax = taxable * 0.05; rate = "5%"; sub = 0; }
+        else if (taxable <= 30000000) { tax = taxable * 0.1 - 500000; rate = "10%"; sub = 500000; }
+        else if (taxable <= 60000000) { tax = taxable * 0.2 - 3500000; rate = "20%"; sub = 3500000; }
+        else if (taxable <= 100000000) { tax = taxable * 0.3 - 9500000; rate = "30%"; sub = 9500000; }
+        else { tax = taxable * 0.35 - 14500000; rate = "35%"; sub = 14500000; }
 
+        // Hiển thị kết quả cam đậm
         document.getElementById('tax_display').innerText = f(tax);
         
-        const bh_text = contractSalary > MAX_BHXH ? `(20 x ${f(L_CO_SO)})` : f(contractSalary);
-        const bhtn_text = contractSalary > MAX_BHTN ? `(20 x ${f(LTT
+        // Cập nhật diễn giải
+        expBox.innerHTML = `
+            <div class="calc-row"><span>Tổng bảo hiểm (10.5%):</span><span>- ${f(total_ins)}</span></div>
+            <div class="calc-row"><span>Giảm trừ bản thân:</span><span>- 15.500.000</span></div>
+            <div class="calc-row"><span>Giảm trừ phụ thuộc (${dep} người):</span><span>- ${f(gt_phuthuoc)}</span></div>
+            <hr>
+            <div class="calc-row bold"><span>Thu nhập tính thuế:</span><span>${f(taxable)}</span></div>
+            <div class="calc-row bold final-tax-row">
+                <span>Số thuế TNCN cần nộp (${rate}):</span>
+                <span>${f(tax)}</span>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
