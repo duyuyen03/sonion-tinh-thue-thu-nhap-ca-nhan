@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Công cụ tính thuế TNCN chuẩn 2026</title>
+    <title>Công cụ tính thuế TNCN dựa trên mức lương GROSS (theo tháng)</title>
     <style>
         :root {
             --primary-orange: #FF6000;
@@ -16,9 +16,9 @@
         .author-tag {
             position: absolute;
             top: 20px;
-            right: 20px;
-            font-size: 13px;
-            color: #888;
+            left: 20px;
+            font-size: 26px;
+            color: #525252;
             font-style: italic;
         }
 
@@ -98,7 +98,7 @@
 
     <div class="input-group">
         <label>🛡️ Mức lương đóng bảo hiểm</label>
-        <input type="text" id="ins_salary" readonly placeholder="Tự động tính...">
+        <input type="text" id="ins_salary" readonly>
     </div>
 
     <div class="input-group">
@@ -196,15 +196,15 @@
 
         expBox.innerHTML = `
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-note="Mức lương đóng BHXH tối đa không quá 20 lần mức lương cơ sở.">(i)</span></span>
+                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-note="Mức lương đóng BHXH tối đa không quá 20 lần mức lương cơ sở (2,34 triệu đồng/tháng).">(i)</span></span>
                 <span class="formula-col">= ${bh_text} x 8% = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-note="Mức lương đóng BHYT tối đa không quá 20 lần mức lương cơ sở.">(i)</span></span>
+                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-note="Mức lương đóng BHYT tối đa không quá 20 lần mức lương cơ sở (2,34 triệu đồng/tháng).">(i)</span></span>
                 <span class="formula-col">= ${bh_text} x 1.5% = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-note="Mức lương đóng BHTN tối đa không quá 20 lần mức lương tối thiểu vùng.">(i)</span></span>
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-note="Mức lương đóng BHTN tối đa không quá 20 lần mức lương tối thiểu vùng (vùng I: 4,96 triệu đồng/tháng).">(i)</span></span>
                 <span class="formula-col">= ${bhtn_text} x 1% = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 11.000.000</span></div>
