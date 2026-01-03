@@ -10,7 +10,11 @@
             --text-dark: #333;
         }
 
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
+        
+        /* Thêm Author ở góc trái */
+        .author-tag { position: absolute; top: 10px; left: 20px; font-size: 13px; color: #999; font-style: italic; }
+
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         h2 { color: var(--primary-orange); text-align: center; margin-bottom: 30px; font-weight: 700; }
 
@@ -19,7 +23,7 @@
         .input-group input { flex: 1.5; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: var(--primary-orange); }
 
-        /* Ô kết quả cam đậm */
+        /* Kết quả thuế cần nộp */
         .tax-highlight-row { 
             background-color: var(--light-orange); 
             border-radius: 8px; 
@@ -38,7 +42,7 @@
         .label-col { width: 420px; color: #555; position: relative; }
         .formula-col { flex: 1; text-align: right; color: #333; }
 
-        /* Style cho ghi chú (i) */
+        /* Ghi chú (i) hover */
         .info-icon { 
             color: var(--primary-orange); 
             font-style: italic; 
@@ -76,6 +80,8 @@
     </style>
 </head>
 <body>
+
+<div class="author-tag">Author: vyho</div>
 
 <div class="container">
     <h2>Công cụ tính thuế TNCN chuẩn 2026</h2>
@@ -136,7 +142,6 @@
     const f = (n) => Math.round(n).toLocaleString('vi-VN');
 
     function syncInsSalary() {
-        // Tự động điền mức lương đóng bảo hiểm bằng lương Gross khi người dùng nhập lương Gross
         const gross = document.getElementById('contract_salary').value;
         document.getElementById('ins_salary').value = gross;
     }
@@ -166,13 +171,14 @@
         const bhtn_val = Math.min(insSalary, MAX_BHTN) * 0.01;
         const total_ins = bhxh_val + bhyt_val + bhtn_val;
 
-        const gtbt = 15500000;
-        const gtpt = dep * 6200000;
+        const gtbt = 15500000; // Cập nhật theo yêu cầu 15,5tr
+        const gtpt = dep * 6200000; // Cập nhật theo yêu cầu 6,2tr
 
         let taxable = totalGross - total_ins - gtbt - gtpt;
         if (taxable < 0) taxable = 0;
 
         let tax = 0; let rate = ""; let sub = 0;
+        // Bậc thuế theo dự thảo 2026
         if (taxable <= 10000000) { tax = taxable * 0.05; rate = "5%"; sub = 0; }
         else if (taxable <= 30000000) { tax = taxable * 0.1 - 500000; rate = "10%"; sub = 500000; }
         else if (taxable <= 60000000) { tax = taxable * 0.2 - 3500000; rate = "20%"; sub = 3500000; }
