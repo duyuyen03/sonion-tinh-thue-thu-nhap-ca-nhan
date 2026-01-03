@@ -12,7 +12,7 @@
 
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
         
-        /* Thêm Author ở góc trái */
+        /* Author ở góc trái */
         .author-tag { position: absolute; top: 10px; left: 20px; font-size: 13px; color: #999; font-style: italic; }
 
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
@@ -22,8 +22,10 @@
         .input-group label { flex: 1; font-size: 14px; font-weight: 600; }
         .input-group input { flex: 1.5; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: var(--primary-orange); }
+        
+        /* Style cho ô Readonly */
+        .input-group input[readonly] { background-color: #f9f9f9; color: #666; cursor: not-allowed; border: 1px solid #eee; }
 
-        /* Kết quả thuế cần nộp */
         .tax-highlight-row { 
             background-color: var(--light-orange); 
             border-radius: 8px; 
@@ -88,7 +90,7 @@
 
     <div class="input-group">
         <label>📄 Lương trên hợp đồng (GROSS) *</label>
-        <input type="number" id="contract_salary" placeholder="Nhập số tiền..." oninput="syncInsSalary(); calculate();">
+        <input type="number" id="contract_salary" placeholder="Nhập số tiền..." oninput="syncAndCalculate()">
     </div>
 
     <div class="input-group">
@@ -103,7 +105,7 @@
 
     <div class="input-group">
         <label>🛡️ Mức lương đóng bảo hiểm *</label>
-        <input type="number" id="ins_salary" placeholder="Nhập mức đóng bảo hiểm..." oninput="calculate()">
+        <input type="number" id="ins_salary" readonly placeholder="Tự động tính theo Gross...">
     </div>
 
     <div class="input-group">
@@ -141,9 +143,11 @@
 <script>
     const f = (n) => Math.round(n).toLocaleString('vi-VN');
 
-    function syncInsSalary() {
+    function syncAndCalculate() {
+        // Đồng bộ lương Gross sang ô Bảo hiểm
         const gross = document.getElementById('contract_salary').value;
         document.getElementById('ins_salary').value = gross;
+        calculate();
     }
 
     function calculate() {
@@ -171,14 +175,14 @@
         const bhtn_val = Math.min(insSalary, MAX_BHTN) * 0.01;
         const total_ins = bhxh_val + bhyt_val + bhtn_val;
 
-        const gtbt = 15500000; // Cập nhật theo yêu cầu 15,5tr
-        const gtpt = dep * 6200000; // Cập nhật theo yêu cầu 6,2tr
+        const gtbt = 15500000; // Mức giảm trừ bản thân mới
+        const gtpt = dep * 6200000; // Mức giảm trừ người phụ thuộc mới
 
         let taxable = totalGross - total_ins - gtbt - gtpt;
         if (taxable < 0) taxable = 0;
 
         let tax = 0; let rate = ""; let sub = 0;
-        // Bậc thuế theo dự thảo 2026
+        // Bậc thuế 2026
         if (taxable <= 10000000) { tax = taxable * 0.05; rate = "5%"; sub = 0; }
         else if (taxable <= 30000000) { tax = taxable * 0.1 - 500000; rate = "10%"; sub = 500000; }
         else if (taxable <= 60000000) { tax = taxable * 0.2 - 3500000; rate = "20%"; sub = 3500000; }
@@ -187,6 +191,7 @@
 
         document.getElementById('tax_display').innerText = f(tax);
 
+        // Hiển thị công thức trần bảo hiểm
         const bh_formula = insSalary > MAX_BH ? `(20 x ${f(L_CO_SO)})` : f(insSalary);
         const bhtn_formula = insSalary > MAX_BHTN ? `(20 x ${f(LTT_VUNG)})` : f(insSalary);
         const tax_math = sub > 0 ? ` x ${rate} - ${f(sub)}` : ` x ${rate}`;
