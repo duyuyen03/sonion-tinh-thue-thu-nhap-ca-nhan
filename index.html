@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Công cụ tính thuế TNCN dựa trên mức lương GROSS (theo tháng) 2025</title>
+    <title>Công cụ tính thuế TNCN chuẩn 2026</title>
     <style>
         :root {
             --primary-orange: #FF6000;
@@ -13,12 +13,11 @@
 
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
         
-        /* Thêm dòng author ở góc phải */
         .author-tag {
             position: absolute;
             top: 20px;
             right: 20px;
-            font-size: 26px;
+            font-size: 13px;
             color: #888;
             font-style: italic;
         }
@@ -41,15 +40,37 @@
             font-size: 12px; width: 280px; z-index: 100; font-style: normal; font-weight: 400; line-height: 1.5; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .tax-highlight-row { background-color: var(--light-orange); border-radius: 8px; padding: 15px 20px; margin-top: 20px; display: flex; align-items: center; border: 1px solid #ffe0cc; }
-        .tax-highlight-row label { flex: 1; font-weight: bold; }
-        .tax-highlight-row .result-val { flex: 1.5; text-align: right; color: var(--primary-orange); font-weight: 800; font-size: 24px; }
+        /* Ô kết quả màu cam rực rỡ */
+        .tax-highlight-row { 
+            background-color: var(--light-orange); 
+            border-radius: 8px; 
+            padding: 15px 20px; 
+            margin-top: 20px; 
+            display: flex; 
+            align-items: center; 
+            border: 2px solid var(--primary-orange); /* Tăng độ dày viền cam */
+        }
+        .tax-highlight-row label { 
+            flex: 1; 
+            font-weight: bold; 
+            color: var(--primary-orange); /* Chữ nhãn màu cam */
+        }
+        .tax-highlight-row .result-val { 
+            flex: 1.5; 
+            text-align: right; 
+            color: var(--primary-orange); 
+            font-weight: 900; 
+            font-size: 28px; /* Tăng kích thước số tiền */
+        }
 
         .explanation-section { margin-top: 40px; }
         .detail-box { border: 1px solid #eee; border-radius: 10px; padding: 25px; line-height: 2.5; font-size: 14.5px; background: #fff; }
         .calc-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
         .label-col { width: 350px; color: #555; }
         .formula-col { flex: 1; text-align: right; color: #333; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+        .final-tax-row { color: var(--primary-orange) !important; font-weight: 800; }
+        .final-tax-row .label-col, .final-tax-row .formula-col { color: var(--primary-orange) !important; }
 
         .tax-table-container { border: 1px solid #eee; border-radius: 8px; overflow: hidden; margin-top: 25px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .table-title { padding: 12px 20px; background: #f9f9f9; border-bottom: 1px solid #eee; font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; font-style: italic; }
@@ -120,7 +141,7 @@
             <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc</span><span class="formula-col" id="ex_gtpt"></span></div>
             <hr>
             <div class="calc-row bold"><span class="label-col">Tổng thu nhập tính thuế</span><span class="formula-col" id="ex_taxable"></span></div>
-            <div class="calc-row bold" style="color: var(--primary-orange);">
+            <div class="calc-row bold final-tax-row">
                 <span class="label-col">Số thuế thu nhập cá nhân cần nộp</span>
                 <span class="formula-col" id="ex_final_tax"></span>
             </div>
@@ -156,18 +177,15 @@
         const otSalary = parseFloat(document.getElementById('ot_salary').value) || 0;
         const dep = parseInt(document.getElementById('dependents').value) || 0;
 
-        // Tự động cập nhật mức lương đóng bảo hiểm bằng lương hợp đồng
         document.getElementById('ins_salary').value = contractSalary;
 
         const totalGross = contractSalary + bonus + otSalary;
         
-        // Hằng số tính toán 2026
-        const L_CO_SO = 2340000; 
-        const LTT_VUNG1 = 4960000; 
-        const MAX_BHXH = 20 * L_CO_SO; 
-        const MAX_BHTN = 20 * LTT_VUNG1; 
+        const L_CO_SO = 2340000;
+        const LTT_VUNG1 = 4960000;
+        const MAX_BHXH = 20 * L_CO_SO;
+        const MAX_BHTN = 20 * LTT_VUNG1;
 
-        // Tính bảo hiểm trên mức lương hợp đồng
         const act_bhxh = Math.min(contractSalary, MAX_BHXH);
         const act_bhtn = Math.min(contractSalary, MAX_BHTN);
 
@@ -193,7 +211,6 @@
 
         document.getElementById('tax_display').innerText = f(tax);
         
-        // Diễn giải chi tiết giống ảnh mẫu
         const bh_text = contractSalary > MAX_BHXH ? `(20 x ${f(L_CO_SO)})` : f(contractSalary);
         document.getElementById('ex_bhxh').innerText = `= ${bh_text} x 8% = ${f(bhxh)}`;
         document.getElementById('ex_bhyt').innerText = `= ${bh_text} x 1.5% = ${f(bhyt)}`;
@@ -207,7 +224,6 @@
         const sub_str = sub > 0 ? ` - ${f(sub)}` : "";
         document.getElementById('ex_final_tax').innerText = `= ${f(taxable)} x ${rate}${sub_str} = ${f(tax)}`;
         
-        // Dòng chú thích mức thuế áp dụng
         document.getElementById('bracket_desc').innerText = `(Mức thuế TNCN áp dụng đối với thu nhập ${f(taxable)}đ/tháng là ${rate}${sub_str})(Xem bảng bên dưới)`;
     }
     
