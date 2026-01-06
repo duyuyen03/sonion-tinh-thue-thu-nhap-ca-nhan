@@ -45,8 +45,8 @@
         .label-col { width: 420px; color: #555; position: relative; }
         .formula-col { flex: 1; text-align: right; color: #333; white-space: pre-wrap; }
         
-        /* Lớp CSS in đậm cho kết quả tính toán */
-        .bold-result { font-weight: 700; color: #000; }
+        /* Lớp CSS bôi đậm toàn bộ dòng theo yêu cầu */
+        .full-bold { font-weight: 700; color: #000 !important; }
 
         .info-icon { color: var(--primary-orange); font-style: italic; font-weight: bold; margin-left: 5px; cursor: help; position: relative; display: inline-block; }
         .info-icon:hover::after {
@@ -217,6 +217,7 @@
         const ins_basis = insSalary > max_bh ? `(20 x ${f(L_CO_SO_NEW)})` : f(insSalary);
         const bhtn_basis = insSalary > max_bhtn ? `(20 x ${f(LTT_VUNG_NEW)})` : f(insSalary);
 
+        // PHẦN DIỄN GIẢI CHI TIẾT VỚI BÔI ĐẬM TOÀN BỘ DÒNG KẾT QUẢ
         expBox.innerHTML = `
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH, BHYT không quá 20 lần mức lương cơ sở (2.340.000 đồng/tháng)">(i)</span></span>
@@ -233,13 +234,13 @@
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 15.500.000</span></div>
             <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc</span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
             <hr>
-            <div class="calc-row bold">
+            <div class="calc-row full-bold">
                 <span class="label-col">Tổng thu nhập tính thuế</span>
-                <span class="formula-col">= ${f(totalGross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 15.500.000 + ${f(gtpt)}) = <span class="bold-result">${f(taxable)}</span></span>
+                <span class="formula-col">= ${f(totalGross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 15.500.000 + ${f(gtpt)}) = ${f(taxable)}</span>
             </div>
-            <div class="calc-row bold" style="color: var(--primary-orange); border-top: 1px solid #eee; padding-top: 10px;">
+            <div class="calc-row full-bold" style="color: var(--primary-orange) !important; border-top: 1px solid #eee; padding-top: 10px;">
                 <span class="label-col">Số thuế thu nhập cá nhân cần nộp (Cộng dồn các bậc)</span>
-                <span class="formula-col">= <span class="bold-result">${f(totalTax_new)}</span></span>
+                <span class="formula-col">= ${f(totalTax_new)}</span>
             </div>
             <p class="note-text">(Số thuế TNCN được tính bằng cách áp dụng mức thu nhập ${f(taxable)}đ vào biểu thuế lũy tiến từng bậc)</p>
         `;
