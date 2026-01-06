@@ -14,7 +14,10 @@
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
         .author-tag { position: absolute; top: 10px; left: 20px; font-size: 26px; color: #666666; font-style: italic; }
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        h2 { color: var(--primary-orange); text-align: center; margin-bottom: 30px; font-weight: 700; }
+        
+        /* Căn chỉnh tiêu đề và chú thích sát nhau */
+        h2 { color: var(--primary-orange); text-align: center; margin-bottom: 5px; font-weight: 700; }
+        .sub-header { text-align: center; color: #888; font-size: 13px; font-style: italic; margin-bottom: 30px; display: block; }
 
         .input-group { display: flex; align-items: center; margin-bottom: 15px; }
         .input-group label { flex: 1; font-size: 14px; font-weight: 600; }
@@ -41,6 +44,9 @@
         .calc-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
         .label-col { width: 420px; color: #555; position: relative; }
         .formula-col { flex: 1; text-align: right; color: #333; white-space: pre-wrap; }
+        
+        /* Lớp CSS in đậm cho kết quả tính toán */
+        .bold-result { font-weight: 700; color: #000; }
 
         .info-icon { color: var(--primary-orange); font-style: italic; font-weight: bold; margin-left: 5px; cursor: help; position: relative; display: inline-block; }
         .info-icon:hover::after {
@@ -64,7 +70,7 @@
 
 <div class="container">
     <h2>Công cụ tính thuế TNCN dựa trên mức lương GROSS (theo tháng)</h2>
-    <p class="note-text">(Áp dụng mức giảm trừ gia cảnh và biểu thuế TNCN có hiệu lực từ 1/1/2026)</p>
+    <span class="sub-header">(Áp dụng mức giảm trừ gia cảnh và biểu thuế TNCN có hiệu lực từ 1/1/2026)</span>
 
     <div class="input-group">
         <label>📄 Lương trên hợp đồng *</label>
@@ -182,7 +188,6 @@
         const gtpt = dep * 6200000;
         let taxable = Math.max(0, totalGross - total_ins - gtbt - gtpt);
 
-        // --- TÍNH TOÁN LUẬT MỚI VÀ ĐỔ BẢNG ---
         let totalTax_new = 0;
         let tableRows = "";
         NEW_BRACKETS.forEach((b, i) => {
@@ -199,20 +204,16 @@
         });
         document.getElementById('tax_table_body').innerHTML = tableRows;
 
-        // --- TÍNH LUẬT CŨ ĐỐI CHIẾU ---
-        const bhtn_old = Math.min(insSalary, 20 * 4960000) * 0.01;
-        const taxable_old = Math.max(0, totalGross - (bhxh + bhyt + bhtn_old) - 11000000 - (dep * 4400000));
+        const taxable_old = Math.max(0, totalGross - (bhxh + bhyt + (Math.min(insSalary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
         let totalTax_old = 0;
         for (let b of OLD_BRACKETS) {
             if (taxable_old <= b.max) { totalTax_old = taxable_old * b.rate - b.sub; break; }
         }
 
-        // --- HIỂN THỊ KẾT QUẢ ---
         document.getElementById('tax_display').innerText = f(totalTax_new);
         document.getElementById('old_tax_display').innerText = f(totalTax_old);
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
-        // --- PHẦN DIỄN GIẢI CHI TIẾT (KHÔI PHỤC Y HỆT MẪU ẢNH) ---
         const ins_basis = insSalary > max_bh ? `(20 x ${f(L_CO_SO_NEW)})` : f(insSalary);
         const bhtn_basis = insSalary > max_bhtn ? `(20 x ${f(LTT_VUNG_NEW)})` : f(insSalary);
 
@@ -234,11 +235,11 @@
             <hr>
             <div class="calc-row bold">
                 <span class="label-col">Tổng thu nhập tính thuế</span>
-                <span class="formula-col">= ${f(totalGross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 15.500.000 + ${f(gtpt)}) = ${f(taxable)}</span>
+                <span class="formula-col">= ${f(totalGross)} - (${f(bhxh)} + ${f(bhyt)} + ${f(bhtn)} + 15.500.000 + ${f(gtpt)}) = <span class="bold-result">${f(taxable)}</span></span>
             </div>
             <div class="calc-row bold" style="color: var(--primary-orange); border-top: 1px solid #eee; padding-top: 10px;">
-                <span class="label-col">Số thuế thu nhập cá nhân cần nộp</span>
-                <span class="formula-col">= (Cộng dồn các bậc ở bảng dưới) = ${f(totalTax_new)}</span>
+                <span class="label-col">Số thuế thu nhập cá nhân cần nộp (Cộng dồn các bậc)</span>
+                <span class="formula-col">= <span class="bold-result">${f(totalTax_new)}</span></span>
             </div>
             <p class="note-text">(Số thuế TNCN được tính bằng cách áp dụng mức thu nhập ${f(taxable)}đ vào biểu thuế lũy tiến từng bậc)</p>
         `;
