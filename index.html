@@ -72,7 +72,7 @@
 
     <div class="input-group">
         <label>📄 Lương trên hợp đồng *</label>
-        <input type="text" id="contract_salary" placeholder="0" oninput="formatInput(this); syncAndCalculate();">
+        <input type="text" id="contract_salary" placeholder="Nhập số tiền..." oninput="formatInput(this); syncAndCalculate();">
     </div>
     <div class="input-group">
         <label>🎁 Tổng tiền thưởng tính thuế</label>
@@ -92,7 +92,7 @@
     </div>
 
     <div class="tax-highlight-row">
-        <label>💸 Số thuế thu nhập cá nhân cần nộp (Luật mới)</label>
+        <label>💸 Số thuế thu nhập cá nhân cần nộp</label>
         <div class="result-val" id="tax_display">0</div>
     </div>
 
@@ -255,7 +255,7 @@
                 <span class="label-col">Số thuế thu nhập cá nhân cần nộp (Cộng dồn các bậc)</span>
                 <span class="formula-col">= ${f(totalTax_new)}</span>
             </div>
-            <p class="note-text">(Số thuế TNCN được tính bằng cách áp dụng mức thu nhập ${f(taxable)}đ vào biểu thuế lũy tiến từng bậc)</p>
+            <p class="note-text">(Số thuế TNCN được tính bằng cách áp dụng mức thu nhập ${f(taxable)}đ vào biểu thuế lũy tiến từng bậc)(Xem bảng bên dưới)</p>
         `;
     }
 </script>
