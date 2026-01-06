@@ -13,23 +13,18 @@
 
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; color: var(--text-dark); }
         
-        /* Thanh tên công ty (Header Sonion) */
+        /* Thanh tên công ty Sonion */
         .company-header {
             background-color: var(--sonion-black);
             padding: 15px 40px;
             display: flex;
             align-items: center;
         }
-        .company-logo {
-            height: 40px; /* Điều chỉnh kích thước logo */
-            display: flex;
-            align-items: center;
-        }
+        .company-logo { height: 40px; display: flex; align-items: center; }
         .company-logo img { height: 100%; filter: brightness(1); }
 
         .container { background: white; max-width: 900px; margin: 30px auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
         
-        /* Tiêu đề và chú thích sát nhau */
         h2 { color: var(--primary-orange); text-align: center; margin-bottom: 5px; font-weight: 700; margin-top: 0; }
         .sub-header { text-align: center; color: #888; font-size: 13px; font-style: italic; margin-bottom: 30px; display: block; }
 
@@ -52,7 +47,6 @@
         .label-col { width: 420px; color: #555; position: relative; }
         .formula-col { flex: 1; text-align: right; color: #333; white-space: pre-wrap; }
         
-        /* Bôi đậm toàn bộ dòng */
         .full-bold { font-weight: 700; color: #000 !important; }
 
         .info-icon { color: var(--primary-orange); font-style: italic; font-weight: bold; margin-left: 5px; cursor: help; position: relative; display: inline-block; }
@@ -116,22 +110,19 @@
         </div>
     </div>
 
-    <div class="section-title">BIỂU TÍNH THUẾ RÚT GỌN (CÔNG THỨC TÍNH NHANH)</div>
+    <div class="section-title">BẢNG TÍNH THUẾ LŨY TIẾN (LUẬT MỚI)</div>
     <table class="tax-table">
         <thead>
             <tr>
                 <th>Bậc</th>
                 <th>Thu nhập tính thuế/Tháng</th>
                 <th>Thuế suất</th>
+                <th>Cách tính lũy tiến</th>
+                <th>Thuế từng bậc</th>
             </tr>
         </thead>
         <tbody id="tax_table_body">
-            <tr><td>1</td><td>Đến 10 triệu đồng</td><td>5%</td></tr>
-            <tr><td>2</td><td>Từ 10 trđ đến 30 trđ</td><td>10%</td></tr>
-            <tr><td>3</td><td>Từ 30 trđ đến 60 trđ</td><td>20%</td></tr>
-            <tr><td>4</td><td>Từ 60 trđ đến 100 trđ</td><td>30%</td></tr>
-            <tr><td>5</td><td>Trên 100 trđ</td><td>35%</td></tr>
-        </tbody>
+            </tbody>
     </table>
 </div>
 
@@ -146,6 +137,14 @@
     function getRawValue(id) {
         return parseFloat(document.getElementById(id).value.replace(/\./g, "")) || 0;
     }
+
+    const NEW_BRACKETS = [
+        { min: 0, max: 10000000, rate: 0.05, label: "Đến 10 triệu đồng" },
+        { min: 10000000, max: 30000000, rate: 0.10, label: "Từ 10 trđ đến 30 trđ" },
+        { min: 30000000, max: 60000000, rate: 0.20, label: "Từ 30 trđ đến 60 trđ" },
+        { min: 60000000, max: 100000000, rate: 0.30, label: "Từ 60 trđ đến 100 trđ" },
+        { min: 100000000, max: Infinity, rate: 0.35, label: "Trên 100 trđ" }
+    ];
 
     function syncAndCalculate() {
         document.getElementById('ins_salary').value = document.getElementById('contract_salary').value;
@@ -162,6 +161,7 @@
 
         if (salary <= 0) {
             document.getElementById('tax_display').innerText = "0";
+            document.getElementById('tax_table_body').innerHTML = "";
             expBox.innerHTML = '<p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết.</p>';
             return;
         }
@@ -179,30 +179,43 @@
         const gtpt = dep * 6200000;
         let taxable = Math.max(0, totalGross - total_ins - gtbt - gtpt);
 
-        // Tính thuế nhanh theo biểu mới 2026
-        let tax = 0;
-        if (taxable <= 10000000) tax = taxable * 0.05;
-        else if (taxable <= 30000000) tax = taxable * 0.1 - 500000;
-        else if (taxable <= 60000000) tax = taxable * 0.2 - 3500000;
-        else if (taxable <= 100000000) tax = taxable * 0.3 - 9500000;
-        else tax = taxable * 0.35 - 14500000;
+        // Tính toán chi tiết từng bậc cho bảng
+        let totalTax = 0;
+        let tableRows = "";
+        NEW_BRACKETS.forEach((b, i) => {
+            let taxStep = 0;
+            let incStep = 0;
+            if (taxable > b.min) {
+                incStep = Math.min(taxable, b.max) - b.min;
+                taxStep = incStep * b.rate;
+                totalTax += taxStep;
+            }
+            tableRows += `<tr class="${incStep > 0 ? 'active-bracket' : ''}">
+                <td>${i+1}</td>
+                <td>${b.label}</td>
+                <td>${b.rate*100}%</td>
+                <td>${incStep > 0 ? f(incStep) + ' x ' + (b.rate*100) + '%' : '-'}</td>
+                <td>${f(taxStep)}</td>
+            </tr>`;
+        });
 
-        document.getElementById('tax_display').innerText = f(tax);
+        document.getElementById('tax_display').innerText = f(totalTax);
+        document.getElementById('tax_table_body').innerHTML = tableRows;
 
         const ins_basis = insSalary > max_bh ? `(${f(max_bh)})` : f(insSalary);
         const bhtn_basis = insSalary > max_bhtn ? `(${f(max_bhtn)})` : f(insSalary);
 
         expBox.innerHTML = `
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa đóng BHXH/BHYT không quá 20 lần lương cơ sở (46.800.000đ)">(i)</span></span>
+                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH, BHYT không quá 20 lần mức lương cơ sở (2.340.000 đồng/tháng)">(i)</span></span>
                 <span class="formula-col">= ${ins_basis} x 8% = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Mức lương tối đa đóng BHXH/BHYT không quá 20 lần lương cơ sở (46.800.000đ)">(i)</span></span>
+                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH, BHYT không quá 20 lần mức lương cơ sở (2.340.000 đồng/tháng)">(i)</span></span>
                 <span class="formula-col">= ${ins_basis} x 1.5% = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Mức lương tối đa đóng BHTN không quá 20 lần lương tối thiểu vùng">(i)</span></span>
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000 đồng/tháng)">(i)</span></span>
                 <span class="formula-col">= ${bhtn_basis} x 1% = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 15.500.000</span></div>
@@ -214,7 +227,7 @@
             </div>
             <div class="calc-row full-bold" style="color: var(--primary-orange) !important; border-top: 1px solid #eee; padding-top: 10px;">
                 <span class="label-col">Số thuế thu nhập cá nhân cần nộp (Cộng dồn các bậc)</span>
-                <span class="formula-col">= ${f(tax)}</span>
+                <span class="formula-col">= ${f(totalTax)}</span>
             </div>
         `;
     }
