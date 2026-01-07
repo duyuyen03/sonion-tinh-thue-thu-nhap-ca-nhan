@@ -220,21 +220,21 @@
         
         const text_basis_yt = salary > max_bh ? `(2.340.000 x 20) x 1.5%` : `x 1.5%`;
         
-        const text_basis_tn = salary > max_bhtn ? `(5.310.000) x 1%` : `x 1%`;
+        const text_basis_tn = salary > max_bhtn ? `(5.310.000 x 20) x 1%` : `x 1%`;
         const text_basis_tn_val = salary > max_bhtn ? f(max_bhtn) : f(salary);
 
         expBox.innerHTML = `
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">= ${text_basis_bh_val} ${text_basis_bh} = ${f(bhxh)}</span>
+                <span class="formula-col">=  ${text_basis_bh} = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">= ${text_basis_bh_val} ${text_basis_yt} = ${f(bhyt)}</span>
+                <span class="formula-col">=  ${text_basis_yt} = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">= ${text_basis_tn_val} ${text_basis_tn} = ${f(bhtn)}</span>
+                <span class="formula-col">=  ${text_basis_tn} = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 15.500.000</span></div>
             <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc</span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
