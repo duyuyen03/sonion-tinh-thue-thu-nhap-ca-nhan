@@ -15,7 +15,7 @@
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
         
         .lang-switch { position: absolute; top: 15px; right: 20px; }
-        .lang-btn { background: #eee; border: 1px solid #ccc; padding: 5px 12px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .lang-btn { background: #eee; border: 1px solid #ccc; padding: 7px 16px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .lang-btn.active { background: var(--primary-orange); color: white; border-color: var(--primary-orange); }
 
         h2 { color: var(--primary-orange); text-align: center; margin-bottom: 5px; font-weight: 700; font-size: 22px; }
@@ -94,7 +94,7 @@
     <div class="input-group">
         <label>
             <span class="vi-text">🎁 Tổng tiền thưởng và các tiền khác (trừ tiền điện thoại và tiền cơm)</span>
-            <span class="en-text">🎁 Total bonus and other expenses (excl. phone/meal)</span>
+            <span class="en-text">🎁 Total bonus and other expenses (excluding phone and meal allowances)</span>
         </label>
         <input type="text" id="bonus" placeholder="0" oninput="formatInput(this); calculate();">
     </div>
@@ -115,8 +115,8 @@
 
     <div class="tax-highlight-row">
         <label>
-            <span class="vi-text">💸 Thuế TNCN cần nộp (Luật mới)</span>
-            <span class="en-text">💸 PIT Payable (New Law)</span>
+            <span class="vi-text">💸 Thuế TNCN cần nộp tạm tính(Luật mới)</span>
+            <span class="en-text">💸 Provisional personal income tax payable (New Law)</span>
         </label>
         <div class="result-val" id="tax_display">0</div>
     </div>
@@ -125,7 +125,7 @@
         <div class="compare-box">
             <span class="compare-label">
                 <span class="vi-text">Thuế TNCN cần nộp LUẬT CŨ</span>
-                <span class="en-text">PIT Payable (Old Law)</span>
+                <span class="en-text">Personal income tax Payable (Old Law)</span>
             </span>
             <div class="compare-val" id="old_tax_display">0</div>
         </div>
@@ -189,7 +189,7 @@
         { min: 10000000, max: 30000000, rate: 0.10, lbl_vi: "Từ 10 trđ đến 30 trđ", lbl_en: "10M to 30M" },
         { min: 30000000, max: 60000000, rate: 0.20, lbl_vi: "Từ 30 trđ đến 60 trđ", lbl_en: "30M to 60M" },
         { min: 60000000, max: 100000000, rate: 0.30, lbl_vi: "Từ 60 trđ đến 100 trđ", lbl_en: "60M to 100M" },
-        { min: 100000000, max: Infinity, rate: 0.35, lbl_vi: "Trên 100 trđ", lbl_en: "Over 100M" }
+        { min: 100000000, max: Infinity, rate: 0.35, lbl_vi: "Trên 100 triệu đồng", lbl_en: "Over 100M" }
     ];
 
     const OLD_BRACKETS = [
@@ -209,8 +209,8 @@
         const dep = getRawValue('dependents');
         const expBox = document.getElementById('explanation_box');
 
-        const th_vi = `<th>Bậc</th><th>Thu nhập tính thuế</th><th>Thuế suất</th><th>Cách tính</th><th>Thuế từng bậc</th>`;
-        const th_en = `<th>Level</th><th>Taxable Income</th><th>Rate</th><th>Method</th><th>Tax Amount</th>`;
+        const th_vi = `<th>Bậc</th><th>Thu nhập tính thuế/tháng</th><th>Thuế suất</th><th>Cách tính</th><th>Thuế từng bậc</th>`;
+        const th_en = `<th>Level</th><th>Taxable Income/month</th><th>Rate</th><th>Method</th><th>Tax Amount</th>`;
         document.getElementById('table_head').innerHTML = currentLang === 'vi' ? th_vi : th_en;
 
         if (salary <= 0) {
@@ -277,8 +277,8 @@
             tti: currentLang === 'vi' ? "Tổng thu nhập tính thuế" : "Total Taxable Income",
             note: currentLang === 'vi' ? `⚠️ Note: Thu nhập từ tiền OT/ca đêm (${f(ot)}đ) không tính vào thuế.` : `⚠️ Note: OT/Night shift pay (${f(ot)} VND) is tax-exempt.`,
             final: currentLang === 'vi' ? "Số thuế TNCN cần nộp tạm tính" : "Provisional PIT payable",
-            tip1: currentLang === 'vi' ? "Tối đa 20 lần lương cơ sở" : "Max 20x basic salary",
-            tip2: currentLang === 'vi' ? "Tối đa 20 lần lương tối thiểu vùng" : "Max 20x regional minimum wage"
+            tip1: currentLang === 'vi' ? "Mức lương tối đa để đóng BHXH, BHYT không quá 20 lần mức lương cơ sở (2.340.000 đồng/tháng)" : "The maximum salary for calculating social insurance and health insurance contributions is no more than 20 times the basic salary (2,340,000 VND/month)",
+            tip2: currentLang === 'vi' ? "Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (vùng I: 5.310.000 đồng/tháng)" : "The maximum salary for unemployment insurance contributions is no more than 20 times the regional minimum wage (Region I: 5,310,000 VND/month)."
         };
 
         expBox.innerHTML = `
