@@ -217,7 +217,7 @@
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
         // CHUẨN HÓA DIỄN GIẢI THEO HÌNH ẢNH YÊU CẦU
-        const text_basis_bh = salary > max_bh ? `(2.340.000 x 20) x 8%` : `x 8%`;
+        const text_basis_bh = salary > max_bh ? `(2.340.000 x 20) x 8%` : f(salary) `x 8%`;
         const text_basis_bh_val = salary > max_bh ? f(max_bh) : f(salary);
         
         const text_basis_yt = salary > max_bh ? `(2.340.000 x 20) x 1.5%` : `x 1.5%`;
