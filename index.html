@@ -215,12 +215,12 @@
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
         // CHUẨN HÓA DIỄN GIẢI THEO HÌNH ẢNH YÊU CẦU
-        const text_basis_bh = salary > max_bh ? `(Trần 20xLCS) x 8%` : `x 8%`;
+        const text_basis_bh = salary > max_bh ? `(2.340.000 x 20) x 8%` : `x 8%`;
         const text_basis_bh_val = salary > max_bh ? f(max_bh) : f(salary);
         
-        const text_basis_yt = salary > max_bh ? `(Trần 20xLCS) x 1.5%` : `x 1.5%`;
+        const text_basis_yt = salary > max_bh ? `(2.340.000 x 20) x 1.5%` : `x 1.5%`;
         
-        const text_basis_tn = salary > max_bhtn ? `(Trần 20xLTT) x 1%` : `x 1%`;
+        const text_basis_tn = salary > max_bhtn ? `(5.310.000) x 1%` : `x 1%`;
         const text_basis_tn_val = salary > max_bhtn ? f(max_bhtn) : f(salary);
 
         expBox.innerHTML = `
