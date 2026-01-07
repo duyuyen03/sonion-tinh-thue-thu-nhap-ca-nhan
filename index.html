@@ -78,7 +78,7 @@
         <input type="text" id="bonus" placeholder="0" oninput="formatInput(this); calculate();">
     </div>
     <div class="input-group">
-        <label>🕒 Tổng tiền OT/ca đêm<br>Total overtime/night shift pay></label>
+        <label>🕒 Tổng tiền OT/ca đêm<br>Total overtime/night shift pay</label>
         <input type="text" id="ot_salary" placeholder="0" oninput="formatInput(this); calculate();">
     </div>
     <div class="input-group">
@@ -93,11 +93,11 @@
 
     <div class="comparison-container">
         <div class="compare-box">
-            <span class="compare-label">Thuế TNCN cần nộp LUẬT CŨ<br>PIT Payable (New Law)</span>
+            <span class="compare-label">Thuế TNCN cần nộp LUẬT CŨ<br>PIT Payable (Old Law)</span>
             <div class="compare-val" id="old_tax_display">0</div>
         </div>
         <div class="compare-box savings">
-            <span class="compare-label">💰 Tiết kiệm được<em>MONEY SAVED</em></span>
+            <span class="compare-label">💰 Tiết kiệm được<br>Money saved</span>
             <div class="compare-val save-money" id="savings_display">0</div>
         </div>
     </div>
@@ -113,11 +113,11 @@
     <table class="tax-table">
         <thead>
             <tr>
-                <th>Bậc<span>Level</span></th>
-                <th>Thu nhập tính thuế<span>Taxable Income</span></th>
-                <th>Thuế suất<span>Rate</span></th>
-                <th>Cách tính<span>Method</span></th>
-                <th>Thuế từng bậc<span>Tax Amount</span></th>
+                <th>Bậc<br>Level</th>
+                <th>Thu nhập tính thuế<br>Taxable Income</th>
+                <th>Thuế suất<br>Rate</th>
+                <th>Cách tính<br>Method</th>
+                <th>Thuế từng bậc<br>Tax Amount</th>
             </tr>
         </thead>
         <tbody id="tax_table_body"></tbody>
@@ -227,27 +227,27 @@
 
         expBox.innerHTML = `
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm xã hội (8%) <em>Social Insurance</em> <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
+                <span class="label-col">Bảo hiểm xã hội (8%) <br>Social Insurance <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
                 <span class="formula-col">=  ${text_basis_bh} = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%) <em>Health Insurance</em><span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
+                <span class="label-col">Bảo hiểm y tế (1.5%) <br>Health Insurance<span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
                 <span class="formula-col">=  ${text_basis_yt} = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%) <em>Unemployment Insurance</em><span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <br>Unemployment Insurance<span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
                 <span class="formula-col">=  ${text_basis_tn} = ${f(bhtn)}</span>
             </div>
-            <div class="calc-row"><span class="label-col">Giảm trừ bản thân<em>Personal Deduction</em></span><span class="formula-col">= 15.500.000</span></div>
-            <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc<em>Dependent Deduction</em></span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
+            <div class="calc-row"><span class="label-col">Giảm trừ bản thân<br>Personal Deduction</span><span class="formula-col">= 15.500.000</span></div>
+            <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc<br>Dependent Deduction</span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
             <hr>
             <div class="calc-row full-bold">
-                <span class="label-col">Tổng thu nhập tính thuế<em>Total Taxable Income</em></span>
+                <span class="label-col">Tổng thu nhập tính thuế<br>Total Taxable Income</span>
                 <span class="formula-col">= ${f(totalGrossForTax)} - (${f(total_ins)} + 15.5tr + ${f(gtpt)}) = ${f(taxable)}</span>
             </div>
-            <div class="ot-note">⚠️ Note: Thu nhập từ tiền OT/ca đêm (${f(ot)}đ) không tính vào thuế theo luật mới/OT/night shift pay is tax-exempt.</div>
+            <div class="ot-note">⚠️ Note: Thu nhập từ tiền OT/ca đêm (${f(ot)}đ) không tính vào thuế theo luật mới/OT and night shift pay is tax-exempt.</div>
             <div class="calc-row full-bold" style="color: var(--primary-orange) !important; border-top: 1px solid #eee; padding-top: 10px;">
-                <span class="label-col">Số thuế TNCN cần nộp tạm tính<em>Provisional personal income tax payable</em></span>
+                <span class="label-col">Số thuế TNCN cần nộp tạm tính<br>Provisional personal income tax payable</span>
                 <span class="formula-col">= ${f(totalTax_new)}</span>
             </div>
         `;
