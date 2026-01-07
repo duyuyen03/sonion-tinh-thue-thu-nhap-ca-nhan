@@ -44,10 +44,12 @@
         
         .full-bold { font-weight: 700; color: #000 !important; }
 
+        /* Tooltip style */
         .info-icon { color: var(--primary-orange); font-style: italic; font-weight: bold; margin-left: 5px; cursor: help; position: relative; display: inline-block; }
         .info-icon:hover::after {
             content: attr(data-title); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
-            background: #333; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap; z-index: 10; font-weight: normal;
+            background: #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; 
+            white-space: normal; width: 250px; line-height: 1.4; z-index: 10; font-weight: normal;
         }
 
         .section-title { background: #f9f9f9; padding: 10px 20px; font-weight: bold; color: #666; font-size: 13px; text-transform: uppercase; margin-top: 30px; border-radius: 8px 8px 0 0; border: 1px solid #eee; border-bottom: none; }
@@ -56,8 +58,7 @@
         .tax-table th { background: #fafafa; }
         .active-bracket { background-color: #fff4ed; font-weight: bold; }
         
-        .note-text { color: #888; font-size: 13px; font-style: italic; margin-top: 15px; }
-        .ot-note { color: #d9534f; font-weight: bold; font-style: italic; }
+        .ot-note { color: #d9534f; font-weight: bold; font-style: italic; margin-bottom: 10px; }
         hr { border: 0; border-top: 1px dashed #ddd; margin: 15px 0; }
     </style>
 </head>
@@ -65,7 +66,7 @@
 
 <div class="container">
     <h2>Công cụ tính thuế TNCN 2026</h2>
-    <span class="sub-header">(Áp dụng mức giảm trừ gia cảnh và biểu thuế TNCN có hiệu lực từ 1/1/2026)</span>
+    <span class="sub-header">(Áp dụng mức giảm trừ gia cảnh và biểu thuế TNCN mới)</span>
 
     <div class="input-group">
         <label>📄 Lương Gross trên hợp đồng *</label>
@@ -172,7 +173,6 @@
             return;
         }
 
-        // THU NHẬP CHỊU THUẾ = Lương Gross + Thưởng (KHÔNG CỘNG OT)
         const totalGrossForTax = salary + bonus;
         
         const L_CO_SO_NEW = 2340000;
@@ -215,20 +215,20 @@
         document.getElementById('old_tax_display').innerText = f(totalTax_old);
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
-        const ins_basis = salary > max_bh ? `(20 x ${f(L_CO_SO_NEW)})` : f(salary);
-        const bhtn_basis = salary > max_bhtn ? `(20 x ${f(LTT_VUNG_NEW)})` : f(salary);
+        const ins_basis = salary > max_bh ? `(Trần 20xLCS)` : f(salary);
+        const bhtn_basis = salary > max_bhtn ? `(Trần 20xLTT)` : f(salary);
 
         expBox.innerHTML = `
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm xã hội (8%)</span>
+                <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
                 <span class="formula-col">= ${ins_basis} x 8% = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%)</span>
+                <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
                 <span class="formula-col">= ${ins_basis} x 1.5% = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%)</span>
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
                 <span class="formula-col">= ${bhtn_basis} x 1% = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 15.500.000</span></div>
@@ -239,7 +239,7 @@
                 <span class="formula-col">= ${f(totalGrossForTax)} - (${f(total_ins)} + 15.5tr + ${f(gtpt)}) = ${f(taxable)}</span>
             </div>
             <div class="ot-note">⚠️ Note: Thu nhập từ tiền OT (${f(ot)}đ) không tính vào thuế theo luật mới.</div>
-            <div class="calc-row full-bold" style="color: var(--primary-orange) !important; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+            <div class="calc-row full-bold" style="color: var(--primary-orange) !important; border-top: 1px solid #eee; padding-top: 10px;">
                 <span class="label-col">Số thuế TNCN cần nộp</span>
                 <span class="formula-col">= ${f(totalTax_new)}</span>
             </div>
