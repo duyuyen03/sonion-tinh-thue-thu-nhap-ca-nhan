@@ -14,7 +14,6 @@
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
         
-        /* Language Switcher */
         .lang-switch { position: absolute; top: 15px; right: 20px; }
         .lang-btn { background: #eee; border: 1px solid #ccc; padding: 5px 12px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .lang-btn.active { background: var(--primary-orange); color: white; border-color: var(--primary-orange); }
@@ -65,7 +64,6 @@
         .ot-note { color: #d9534f; font-weight: bold; font-style: italic; margin-bottom: 10px; font-size: 13px; margin-top: 10px; }
         hr { border: 0; border-top: 1px dashed #ddd; margin: 15px 0; }
 
-        /* Hide elements based on class */
         .en-text { display: none; }
     </style>
 </head>
@@ -156,8 +154,7 @@
     </div>
     <table class="tax-table">
         <thead>
-            <tr id="table_head">
-                </tr>
+            <tr id="table_head"></tr>
         </thead>
         <tbody id="tax_table_body"></tbody>
     </table>
@@ -170,22 +167,16 @@
         currentLang = lang;
         document.querySelectorAll('.vi-text').forEach(el => el.style.display = lang === 'vi' ? 'inline-block' : 'none');
         document.querySelectorAll('.en-text').forEach(el => el.style.display = lang === 'en' ? 'inline-block' : 'none');
-        
         document.getElementById('btn-vi').classList.toggle('active', lang === 'vi');
         document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-        
-        calculate(); // Tính lại để cập nhật bảng và diễn giải
+        calculate();
     }
 
     const f = (n) => Math.round(n).toLocaleString('vi-VN');
 
     function formatInput(input) {
         let value = input.value.replace(/\D/g, "");
-        if (value === "") {
-            input.value = "";
-        } else {
-            input.value = parseInt(value).toLocaleString('vi-VN');
-        }
+        input.value = value === "" ? "" : parseInt(value).toLocaleString('vi-VN');
     }
 
     function getRawValue(id) {
@@ -218,7 +209,6 @@
         const dep = getRawValue('dependents');
         const expBox = document.getElementById('explanation_box');
 
-        // Cập nhật tiêu đề bảng
         const th_vi = `<th>Bậc</th><th>Thu nhập tính thuế</th><th>Thuế suất</th><th>Cách tính</th><th>Thuế từng bậc</th>`;
         const th_en = `<th>Level</th><th>Taxable Income</th><th>Rate</th><th>Method</th><th>Tax Amount</th>`;
         document.getElementById('table_head').innerHTML = currentLang === 'vi' ? th_vi : th_en;
@@ -227,13 +217,11 @@
             document.getElementById('tax_display').innerText = "0";
             document.getElementById('old_tax_display').innerText = "0";
             document.getElementById('savings_display').innerText = "0";
-            const empty_msg = currentLang === 'vi' ? "Vui lòng nhập mức lương để xem diễn giải chi tiết." : "Please enter salary to view details.";
-            expBox.innerHTML = `<p style="color: #999; text-align: center; font-style: italic;">${empty_msg}</p>`;
+            expBox.innerHTML = `<p style="color: #999; text-align: center; font-style: italic;">${currentLang === 'vi' ? "Vui lòng nhập mức lương để xem diễn giải chi tiết." : "Please enter salary to view details."}</p>`;
             document.getElementById('tax_table_body').innerHTML = "";
             return;
         }
 
-        const totalGrossForTax = salary + bonus;
         const L_CO_SO_2026 = 2340000;
         const LTT_VUNG_2026 = 5310000;
         const max_bh = 20 * L_CO_SO_2026;
@@ -246,7 +234,7 @@
 
         const gtbt = 15500000;
         const gtpt = dep * 6200000;
-        let taxable = Math.max(0, totalGrossForTax - total_ins - gtbt - gtpt);
+        let taxable = Math.max(0, (salary + bonus) - total_ins - gtbt - gtpt);
 
         let totalTax_new = 0;
         let tableRows = "";
@@ -265,7 +253,7 @@
         });
         document.getElementById('tax_table_body').innerHTML = tableRows;
 
-        const taxable_old = Math.max(0, totalGrossForTax - (bhxh + bhyt + (Math.min(salary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
+        const taxable_old = Math.max(0, (salary + bonus) - (bhxh + bhyt + (Math.min(salary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
         let totalTax_old = 0;
         for (let b of OLD_BRACKETS) {
             if (taxable_old <= b.max) { totalTax_old = taxable_old * b.rate - b.sub; break; }
@@ -275,7 +263,11 @@
         document.getElementById('old_tax_display').innerText = f(totalTax_old);
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
-        // XỬ LÝ DIỄN GIẢI
+        // HIỂN THỊ PHÉP TÍNH BẢO HIỂM THEO YÊU CẦU
+        const bhxh_formula = salary > max_bh ? `(20 x 2.340.000) x 8%` : `${f(salary)} x 8%`;
+        const bhyt_formula = salary > max_bh ? `(20 x 2.340.000) x 1.5%` : `${f(salary)} x 1.5%`;
+        const bhtn_formula = salary > max_bhtn ? `(20 x 5.310.000) x 1%` : `${f(salary)} x 1%`;
+
         const txt = {
             si: currentLang === 'vi' ? "Bảo hiểm xã hội" : "Social Insurance",
             hi: currentLang === 'vi' ? "Bảo hiểm y tế" : "Health Insurance",
@@ -283,35 +275,31 @@
             pd: currentLang === 'vi' ? "Giảm trừ bản thân" : "Personal Deduction",
             dd: currentLang === 'vi' ? "Giảm trừ người phụ thuộc" : "Dependent Deduction",
             tti: currentLang === 'vi' ? "Tổng thu nhập tính thuế" : "Total Taxable Income",
-            note: currentLang === 'vi' ? `⚠️ Ghi chú: Thu nhập từ tiền OT/ca đêm (${f(ot)}đ) không tính vào thuế.` : `⚠️ Note: OT/Night shift pay (${f(ot)} VND) is tax-exempt.`,
+            note: currentLang === 'vi' ? `⚠️ Note: Thu nhập từ tiền OT/ca đêm (${f(ot)}đ) không tính vào thuế.` : `⚠️ Note: OT/Night shift pay (${f(ot)} VND) is tax-exempt.`,
             final: currentLang === 'vi' ? "Số thuế TNCN cần nộp tạm tính" : "Provisional PIT payable",
-            tip1: currentLang === 'vi' ? "Mức lương tối đa đóng BHXH/BHYT không quá 20 lần lương cơ sở" : "Max salary for SI/HI is 20x basic salary",
-            tip2: currentLang === 'vi' ? "Mức lương tối đa đóng BHTN không quá 20 lần lương tối thiểu vùng" : "Max salary for UI is 20x regional minimum wage"
+            tip1: currentLang === 'vi' ? "Tối đa 20 lần lương cơ sở" : "Max 20x basic salary",
+            tip2: currentLang === 'vi' ? "Tối đa 20 lần lương tối thiểu vùng" : "Max 20x regional minimum wage"
         };
-
-        const display_bhxh = salary > max_bh ? `(${f(max_bh)}) x 8%` : `${f(salary)} x 8%`;
-        const display_bhyt = salary > max_bh ? `(${f(max_bh)}) x 1.5%` : `${f(salary)} x 1.5%`;
-        const display_bhtn = salary > max_bhtn ? `(${f(max_bhtn)}) x 1%` : `${f(salary)} x 1%`;
 
         expBox.innerHTML = `
             <div class="calc-row">
                 <span class="label-col">${txt.si} (8%) <span class="info-icon" data-title="${txt.tip1}">(i)</span></span>
-                <span class="formula-col">= ${display_bhxh} = ${f(bhxh)}</span>
+                <span class="formula-col">= ${bhxh_formula} = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
                 <span class="label-col">${txt.hi} (1.5%) <span class="info-icon" data-title="${txt.tip1}">(i)</span></span>
-                <span class="formula-col">= ${display_bhyt} = ${f(bhyt)}</span>
+                <span class="formula-col">= ${bhyt_formula} = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
                 <span class="label-col">${txt.ui} (1%) <span class="info-icon" data-title="${txt.tip2}">(i)</span></span>
-                <span class="formula-col">= ${display_bhtn} = ${f(bhtn)}</span>
+                <span class="formula-col">= ${bhtn_formula} = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">${txt.pd}</span><span class="formula-col">= 15.500.000</span></div>
             <div class="calc-row"><span class="label-col">${txt.dd}</span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
             <hr>
             <div class="calc-row full-bold">
                 <span class="label-col">${txt.tti}</span>
-                <span class="formula-col">= ${f(totalGrossForTax)} - (${f(total_ins)} + 15.5tr + ${f(gtpt)}) = ${f(taxable)}</span>
+                <span class="formula-col">= ${f(salary + bonus)} - (${f(total_ins)} + 15.5tr + ${f(gtpt)}) = ${f(taxable)}</span>
             </div>
             <div class="ot-note">${txt.note}</div>
             <div class="calc-row full-bold" style="color: var(--primary-orange) !important; border-top: 1px solid #eee; padding-top: 10px;">
@@ -320,8 +308,6 @@
             </div>
         `;
     }
-    
-    // Khởi tạo bảng ban đầu
     calculate();
 </script>
 </body>
