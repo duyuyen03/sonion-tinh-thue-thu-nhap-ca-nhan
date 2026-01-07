@@ -14,11 +14,11 @@
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; color: var(--text-dark); position: relative; }
         .container { background: white; max-width: 900px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         
-        h2 { color: var(--primary-orange); text-align: center; margin-bottom: 5px; font-weight: 700; }
+        h2 { color: var(--primary-orange); text-align: center; margin-bottom: 5px; font-weight: 700; font-size: 22px; }
         .sub-header { text-align: center; color: #888; font-size: 13px; font-style: italic; margin-bottom: 30px; display: block; }
 
         .input-group { display: flex; align-items: center; margin-bottom: 15px; }
-        .input-group label { flex: 1; font-size: 14px; font-weight: 600; }
+        .input-group label { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.4; }
         .input-group input { flex: 1.5; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; text-align: left; }
 
         .tax-highlight-row { 
@@ -32,15 +32,15 @@
         .comparison-container { display: flex; gap: 15px; margin-top: 15px; }
         .compare-box { flex: 1; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; }
         .compare-box.savings { border-color: #28a745; background-color: #f4fff6; }
-        .compare-label { font-size: 13px; font-weight: 600; color: #666; display: block; margin-bottom: 5px; }
+        .compare-label { font-size: 13px; font-weight: 600; color: #666; display: block; margin-bottom: 5px; line-height: 1.4; }
         .compare-val { font-size: 20px; font-weight: 700; color: var(--blue-compare); }
         .compare-val.save-money { color: #28a745; }
 
         .explanation-section { margin-top: 40px; }
-        .detail-box { border: 1px solid #eee; border-radius: 10px; padding: 25px; line-height: 2.5; font-size: 14.5px; background: #fff; }
-        .calc-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .label-col { width: 420px; color: #555; position: relative; }
-        .formula-col { flex: 1; text-align: right; color: #333; white-space: pre-wrap; }
+        .detail-box { border: 1px solid #eee; border-radius: 10px; padding: 25px; line-height: 2.2; font-size: 14.5px; background: #fff; }
+        .calc-row { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: flex-start; }
+        .label-col { width: 420px; color: #555; position: relative; line-height: 1.4; }
+        .formula-col { flex: 1; text-align: right; color: #333; white-space: pre-wrap; font-weight: 500; }
         
         .full-bold { font-weight: 700; color: #000 !important; }
 
@@ -57,7 +57,7 @@
         .tax-table th { background: #fafafa; }
         .active-bracket { background-color: #fff4ed; font-weight: bold; }
         
-        .ot-note { color: #d9534f; font-weight: bold; font-style: italic; margin-bottom: 10px; }
+        .ot-note { color: #d9534f; font-weight: bold; font-style: italic; margin-bottom: 10px; font-size: 13px; margin-top: 10px; }
         hr { border: 0; border-top: 1px dashed #ddd; margin: 15px 0; }
     </style>
 </head>
@@ -70,7 +70,7 @@
     </span>
 
     <div class="input-group">
-        <label>📄 Lương Gross trên hợp đồng *<br>   Contract Gross Salary *</label>
+        <label>📄 Lương Gross trên hợp đồng *<br>Contract Gross Salary *</label>
         <input type="text" id="contract_salary" placeholder="0" oninput="formatInput(this); calculate();">
     </div>
     <div class="input-group">
@@ -103,7 +103,7 @@
     </div>
 
     <div class="explanation-section">
-        <p style="font-weight: bold; color: var(--primary-orange);">📝 Diễn giải cách tính chi tiết/Caculation details:</p>
+        <p style="font-weight: bold; color: var(--primary-orange);">📝 Diễn giải cách tính chi tiết/Calculation details:</p>
         <div class="detail-box" id="explanation_box">
              <p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết/ Please enter salary to view details.</p>
         </div>
@@ -170,7 +170,7 @@
             document.getElementById('tax_display').innerText = "0";
             document.getElementById('old_tax_display').innerText = "0";
             document.getElementById('savings_display').innerText = "0";
-            expBox.innerHTML = '<p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết.</p>';
+            expBox.innerHTML = '<p style="color: #999; text-align: center; font-style: italic;">Vui lòng nhập mức lương để xem diễn giải chi tiết/ Please enter salary to view details.</p>';
             return;
         }
 
@@ -216,27 +216,23 @@
         document.getElementById('old_tax_display').innerText = f(totalTax_old);
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
-        // CHUẨN HÓA DIỄN GIẢI THEO HÌNH ẢNH YÊU CẦU
-        const text_basis_bh = salary > max_bh ? `(2.340.000 x 20) x 8%` : f(salary) `x 8%`;
-        const text_basis_bh_val = salary > max_bh ? f(max_bh) : f(salary);
-        
-        const text_basis_yt = salary > max_bh ? `(2.340.000 x 20) x 1.5%` : `x 1.5%`;
-        
-        const text_basis_tn = salary > max_bhtn ? `(5.310.000 x 20) x 1%` : `x 1%`;
-        const text_basis_tn_val = salary > max_bhtn ? f(max_bhtn) : f(salary);
+        // XỬ LÝ DIỄN GIẢI CHI TIẾT SỐ TIỀN
+        const display_bhxh = salary > max_bh ? `(2.340.000 x 20) x 8%` : `${f(salary)} x 8%`;
+        const display_bhyt = salary > max_bh ? `(2.340.000 x 20) x 1.5%` : `${f(salary)} x 1.5%`;
+        const display_bhtn = salary > max_bhtn ? `(5.310.000 x 20) x 1%` : `${f(salary)} x 1%`;
 
         expBox.innerHTML = `
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm xã hội (8%) <br>Social Insurance <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">=  ${text_basis_bh} = ${f(bhxh)}</span>
+                <span class="formula-col">= ${display_bhxh} = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm y tế (1.5%) <br>Health Insurance<span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">=  ${text_basis_yt} = ${f(bhyt)}</span>
+                <span class="label-col">Bảo hiểm y tế (1.5%) <br>Health Insurance <span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
+                <span class="formula-col">= ${display_bhyt} = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
-                <span class="label-col">Bảo hiểm thất nghiệp (1%) <br>Unemployment Insurance<span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">=  ${text_basis_tn} = ${f(bhtn)}</span>
+                <span class="label-col">Bảo hiểm thất nghiệp (1%) <br>Unemployment Insurance <span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
+                <span class="formula-col">= ${display_bhtn} = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân<br>Personal Deduction</span><span class="formula-col">= 15.500.000</span></div>
             <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc<br>Dependent Deduction</span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
