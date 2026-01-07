@@ -174,22 +174,15 @@
 
         const totalGrossForTax = salary + bonus;
         
-        const L_CO_SO_NEW = 2340000;
-        const LTT_VUNG_NEW = 5310000;
-        const max_bh = 20 * L_CO_SO_NEW;
-        const max_bhtn = 20 * LTT_VUNG_NEW;
+        const L_CO_SO_2026 = 2340000;
+        const LTT_VUNG_2026 = 5310000;
+        const max_bh = 20 * L_CO_SO_2026;
+        const max_bhtn = 20 * LTT_VUNG_2026;
 
-        // Tính toán các giá trị cơ sở để hiển thị diễn giải
-        const base_bh = Math.min(salary, max_bh);
-        const base_bhtn = Math.min(salary, max_bhtn);
-
-        const bhxh = base_bh * 0.08;
-        const bhyt = base_bh * 0.15; // Lưu ý: 1.5% là 0.015, code cũ ghi 1.5% nhưng công thức hiển thị cần chuẩn
-        const bhtn = base_bhtn * 0.01;
-        
-        // Sửa lại tỷ lệ chuẩn 1.5% = 0.015
-        const real_bhyt = base_bh * 0.015;
-        const total_ins = bhxh + real_bhyt + bhtn;
+        const bhxh = Math.min(salary, max_bh) * 0.08;
+        const bhyt = Math.min(salary, max_bh) * 0.015;
+        const bhtn = Math.min(salary, max_bhtn) * 0.01;
+        const total_ins = bhxh + bhyt + bhtn;
 
         const gtbt = 15500000;
         const gtpt = dep * 6200000;
@@ -211,7 +204,7 @@
         });
         document.getElementById('tax_table_body').innerHTML = tableRows;
 
-        const taxable_old = Math.max(0, totalGrossForTax - (bhxh + real_bhyt + (Math.min(salary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
+        const taxable_old = Math.max(0, totalGrossForTax - (bhxh + bhyt + (Math.min(salary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
         let totalTax_old = 0;
         for (let b of OLD_BRACKETS) {
             if (taxable_old <= b.max) { totalTax_old = taxable_old * b.rate - b.sub; break; }
@@ -221,22 +214,27 @@
         document.getElementById('old_tax_display').innerText = f(totalTax_old);
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
-        // Chuỗi diễn giải số tiền trần
-        const text_basis_bh = salary > max_bh ? `${f(max_bh)} (Trần 20xLCS)` : f(salary);
-        const text_basis_bhtn = salary > max_bhtn ? `${f(max_bhtn)} (Trần 20xLTT)` : f(salary);
+        // CHUẨN HÓA DIỄN GIẢI THEO HÌNH ẢNH YÊU CẦU
+        const text_basis_bh = salary > max_bh ? `(Trần 20xLCS) x 8%` : `x 8%`;
+        const text_basis_bh_val = salary > max_bh ? f(max_bh) : f(salary);
+        
+        const text_basis_yt = salary > max_bh ? `(Trần 20xLCS) x 1.5%` : `x 1.5%`;
+        
+        const text_basis_tn = salary > max_bhtn ? `(Trần 20xLTT) x 1%` : `x 1%`;
+        const text_basis_tn_val = salary > max_bhtn ? f(max_bhtn) : f(salary);
 
         expBox.innerHTML = `
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm xã hội (8%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHXH không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">= ${text_basis_bh} x 8% = ${f(bhxh)}</span>
+                <span class="formula-col">= ${text_basis_bh_val} ${text_basis_bh} = ${f(bhxh)}</span>
             </div>
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm y tế (1.5%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHYT không quá 20 lần mức lương cơ sở (2.340.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">= ${text_basis_bh} x 1.5% = ${f(real_bhyt)}</span>
+                <span class="formula-col">= ${text_basis_bh_val} ${text_basis_yt} = ${f(bhyt)}</span>
             </div>
             <div class="calc-row">
                 <span class="label-col">Bảo hiểm thất nghiệp (1%) <span class="info-icon" data-title="Mức lương tối đa để đóng BHTN không quá 20 lần mức lương tối thiểu vùng (Vùng I: 5.310.000đ/tháng)">(i)</span></span>
-                <span class="formula-col">= ${text_basis_bhtn} x 1% = ${f(bhtn)}</span>
+                <span class="formula-col">= ${text_basis_tn_val} ${text_basis_tn} = ${f(bhtn)}</span>
             </div>
             <div class="calc-row"><span class="label-col">Giảm trừ bản thân</span><span class="formula-col">= 15.500.000</span></div>
             <div class="calc-row"><span class="label-col">Giảm trừ người phụ thuộc</span><span class="formula-col">= 6.200.000 x ${dep} = ${f(gtpt)}</span></div>
