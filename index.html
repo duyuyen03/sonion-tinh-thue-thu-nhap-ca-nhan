@@ -161,7 +161,7 @@
 
     function calculate() {
         const salary = getRawValue('contract_salary');
-        const bonus = getRawValue('bonus');
+        const bonus = getRawValue('bonus'); // Sẽ không cộng vào thu nhập tính thuế
         const ot = getRawValue('ot_salary');
         const dep = getRawValue('dependents');
         const expBox = document.getElementById('explanation_box');
@@ -174,7 +174,8 @@
             return;
         }
 
-        const totalGrossForTax = salary + bonus;
+        // TIỀN THƯỞNG KHÔNG CỘNG VÀO THU NHẬP CHỊU THUẾ THEO YÊU CẦU
+        const totalGrossForTax = salary; 
         
         const L_CO_SO_2026 = 2340000;
         const LTT_VUNG_2026 = 5310000;
@@ -206,7 +207,8 @@
         });
         document.getElementById('tax_table_body').innerHTML = tableRows;
 
-        const taxable_old = Math.max(0, totalGrossForTax - (bhxh + bhyt + (Math.min(salary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
+        // TÍNH THUẾ LUẬT CŨ (KHÔNG CỘNG THƯỞNG VÀO CHỊU THUẾ)
+        const taxable_old = Math.max(0, salary - (bhxh + bhyt + (Math.min(salary, 20 * 4960000) * 0.01)) - 11000000 - (dep * 4400000));
         let totalTax_old = 0;
         for (let b of OLD_BRACKETS) {
             if (taxable_old <= b.max) { totalTax_old = taxable_old * b.rate - b.sub; break; }
@@ -216,7 +218,6 @@
         document.getElementById('old_tax_display').innerText = f(totalTax_old);
         document.getElementById('savings_display').innerText = f(Math.max(0, totalTax_old - totalTax_new));
 
-        // XỬ LÝ DIỄN GIẢI CHI TIẾT SỐ TIỀN
         const display_bhxh = salary > max_bh ? `(2.340.000 x 20) x 8%` : `${f(salary)} x 8%`;
         const display_bhyt = salary > max_bh ? `(2.340.000 x 20) x 1.5%` : `${f(salary)} x 1.5%`;
         const display_bhtn = salary > max_bhtn ? `(5.310.000 x 20) x 1%` : `${f(salary)} x 1%`;
